@@ -43,7 +43,7 @@ export default function BasicTable() {
       try {
         // Fetch Campaign Insights
         const campaignsResponse = await axios.get(
-          `/api/campaign-insights/act_${id}?since=${since}&until=${until}`
+          `https://www.dashboard-aws.net/api/campaign-insights/act_${id}?since=${since}&until=${until}`
         );
         setCampaignInsights(campaignsResponse.data.campaigns.data);
 
