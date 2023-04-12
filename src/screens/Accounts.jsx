@@ -27,7 +27,7 @@ export default function AccountsTable() {
       try {
         // Fetch Account Insights
         const accountsResponse = await axios.get(
-          `/api/account-insights?since=${since}&until=${until}`
+          `https://www.dashboard-aws.net/api/account-insights?since=${since}&until=${until}`
         );
         setAccountInsights(accountsResponse.data);
       } catch (err) {
