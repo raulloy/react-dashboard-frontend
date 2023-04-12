@@ -1,9 +1,41 @@
+* {
+  text-decoration: none !important;
+}
+
 .MuiTableRow-root > * {
   padding: 10px;
 }
 
 .MuiTableRow-root.MuiTableRow-head > * {
   font-weight: bold !important;
+}
+
+.dropdown-button {
+  margin: 10px 0;
+}
+
+.dropdown-button button {
+  background-color: transparent;
+  color: inherit;
+  border: none;
+  border-bottom: 2px solid #46ffa9;
+  padding: 0;
+}
+
+.dropdown-button button:focus,
+.dropdown-button button:hover {
+  background-color: transparent;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.dropdown-menu {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.Table {
+  margin: 3rem 0;
 }
 
 .Table td,
@@ -14,6 +46,7 @@ th {
 .Table:first-child {
   border-radius: 0.7rem !important;
 }
+
 .status {
   padding: 8px;
   border-radius: 9px;

@@ -1,14 +1,14 @@
 import React from 'react';
-import Cards from '../Cards/Cards';
-import Table from '../Table/Table';
+// import Cards from '../Cards/Cards';
+
+import Campaigns from '../Table/Campaigns';
 import './MainDashboard.css';
 
 const MainDashboard = () => {
   return (
     <div className="MainDash">
-      <h1>Admin Dashboard</h1>
-      <Cards />
-      <Table />
+      {/* <Cards /> */}
+      <Campaigns />
     </div>
   );
 };

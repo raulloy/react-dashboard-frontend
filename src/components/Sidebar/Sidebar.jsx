@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import gimLogo from '../../images/gim-logo.png';
 import './Sidebar.css';
-import { SidebarData } from '../../data.js';
+import { SidebarData } from '../../data/data.js';
+import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   const [selected, setSelected] = useState(0);
@@ -18,7 +19,8 @@ const Sidebar = () => {
       <div className="menu">
         {SidebarData.map((item, index) => {
           return (
-            <div
+            <Link
+              to={item.path}
               className={
                 selected === index && item.heading !== 'Logout'
                   ? 'menuItem active'
@@ -29,7 +31,7 @@ const Sidebar = () => {
             >
               <item.icon />
               <span>{item.heading}</span>
-            </div>
+            </Link>
           );
         })}
       </div>
