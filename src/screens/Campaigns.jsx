@@ -39,8 +39,8 @@ const makeStyle = (status) => {
 };
 
 export default function BasicTable() {
-  const [since, setSince] = useState('2023-03-01');
-  const [until, setUntil] = useState('2023-03-31');
+  const [since, setSince] = useState('2023-04-01');
+  const [until, setUntil] = useState('2023-04-15');
 
   const [selectedAccount, setSelectedAccount] = useState(accounts[0].id);
   const [campaignInsights, setCampaignInsights] = useState([]);
