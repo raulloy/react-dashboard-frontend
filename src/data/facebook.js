@@ -13,3 +13,10 @@ export const campaignsData = async (selectedAccount, since, until) => {
   );
   return response.data;
 };
+
+export const adSetsData = async (selectedAccount, since, until) => {
+  const response = await axios.get(
+    `https://www.dashboard-aws.net/api/adsets-insights/${selectedAccount}?since=${since}&until=${until}`
+  );
+  return response.data;
+};

@@ -1,7 +1,7 @@
 // Sidebar imports
 import { FaRegBuilding, FaRegFolder } from 'react-icons/fa';
 import { FiLogIn } from 'react-icons/fi';
-// import { MdOutlineSpaceDashboard } from 'react-icons/md';
+import { MdOutlineSpaceDashboard } from 'react-icons/md';
 
 // Recent Card Imports
 import img1 from '../images/profile.png';
@@ -20,6 +20,11 @@ export const SidebarData = [
     icon: FaRegFolder,
     heading: 'Campaigns',
     path: '/campaigns',
+  },
+  {
+    icon: MdOutlineSpaceDashboard,
+    heading: 'Ad Sets',
+    path: '/ad-sets',
   },
   {
     icon: FiLogIn,

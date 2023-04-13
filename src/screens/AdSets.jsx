@@ -16,7 +16,7 @@ import Paper from '@mui/material/Paper';
 import '../components/Table/Table.css';
 import { accounts } from '../data/data';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
-import { campaignsData } from '../data/facebook';
+import { adSetsData } from '../data/facebook';
 import { contactsData } from '../data/hubspot';
 
 const makeStyle = (status) => {
@@ -50,12 +50,12 @@ export default function BasicTable() {
     const fetchData = async () => {
       try {
         // Fetch Campaign Insights
-        const campaignsResponse = await campaignsData(
+        const campaignsResponse = await adSetsData(
           selectedAccount,
           since,
           until
         );
-        setCampaignInsights(campaignsResponse.campaigns.data);
+        setCampaignInsights(campaignsResponse.data);
 
         // Fetch Contacts
         const contactsResponse = await contactsData(since, until);
@@ -77,17 +77,21 @@ export default function BasicTable() {
     }
   });
 
+  const adsetsData = sortedCampaigns
+    .map((element) => (element.adsets ? element.adsets.data : []))
+    .flat();
+
   const contactsbyCampaign = contacts.map(({ id, properties }) => ({
     id,
     hs_analytics_first_url: properties.hs_analytics_first_url
-      ? properties.hs_analytics_first_url.match(/hsa_cam=(\d+)/)?.[1]
+      ? properties.hs_analytics_first_url.match(/hsa_grp=(\d+)/)?.[1]
       : null,
   }));
 
   // console.log('contactsbyCampaign', contactsbyCampaign);
 
   const contactCountsByCampaign = contactsbyCampaign.reduce((acc, contact) => {
-    const campaign = campaignInsights.find(
+    const campaign = adsetsData.find(
       (c) => c.id === contact.hs_analytics_first_url
     );
     const campaignId = campaign ? campaign.id : 'unknown';
@@ -124,7 +128,7 @@ export default function BasicTable() {
 
   return (
     <div className="Table">
-      <h3>Campaign Insights</h3>
+      <h3>Ad Sets Insights</h3>
 
       <Form>
         <Row>
@@ -180,23 +184,25 @@ export default function BasicTable() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Campaña</TableCell>
-              <TableCell align="left">Objetivo</TableCell>
+              <TableCell align="left">Campaña</TableCell>
+              <TableCell align="left">Conjuntos de anuncios</TableCell>
               <TableCell align="left">Gastado</TableCell>
               <TableCell align="left">Estado</TableCell>
               <TableCell align="left">Asignaciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody style={{ color: 'white' }}>
-            {sortedCampaigns.map((row) => (
+            {adsetsData.map((row) => (
               <TableRow
                 key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {row.campaign?.name}
                 </TableCell>
-                <TableCell align="left">{row.objective}</TableCell>
+                <TableCell component="th" scope="row">
+                  {row?.name}
+                </TableCell>
                 <TableCell align="left">
                   ${row.insights ? row.insights.data[0].spend : 0}
                 </TableCell>
