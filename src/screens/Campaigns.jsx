@@ -110,8 +110,6 @@ export default function BasicTable() {
       matchingCampaign.some((campaign) => campaign.id === contact.id)
     );
 
-    console.log(matchingContact);
-
     setShow(true);
 
     if (matchingContact) {
@@ -180,10 +178,12 @@ export default function BasicTable() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Campaña</TableCell>
-              <TableCell align="left">Objetivo</TableCell>
+              <TableCell align="left">Campaña</TableCell>
+              <TableCell align="center">Objetivo</TableCell>
               <TableCell align="left">Gastado</TableCell>
-              <TableCell align="left">Estado</TableCell>
+              <TableCell align="left">Resultados</TableCell>
+              <TableCell align="left">Costo por resultados</TableCell>
+              <TableCell align="center">Estado</TableCell>
               <TableCell align="left">Asignaciones</TableCell>
             </TableRow>
           </TableHead>
@@ -196,9 +196,104 @@ export default function BasicTable() {
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
-                <TableCell align="left">{row.objective}</TableCell>
-                <TableCell align="left">
-                  ${row.insights ? row.insights.data[0].spend : 0}
+                <TableCell align="center">{row.objective}</TableCell>
+                <TableCell align="center">
+                  $
+                  {parseFloat(
+                    row.insights ? row.insights.data[0].spend : 0
+                  ).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="center">
+                  {row.objective === 'MESSAGES' &&
+                  row.insights &&
+                  row.insights.data &&
+                  row.insights.data[0].actions
+                    ? (
+                        row.insights.data[0].actions.find(
+                          (element) =>
+                            element.action_type ===
+                            'onsite_conversion.messaging_conversation_started_7d'
+                        ) || {}
+                      ).value + ' Msgs'
+                    : row.objective === 'OUTCOME_ENGAGEMENT' &&
+                      row.insights &&
+                      row.insights.data &&
+                      row.insights.data[0].actions
+                    ? (
+                        row.insights.data[0].actions.find(
+                          (element) => element.action_type === 'like'
+                        ) || {}
+                      ).value + ' Likes'
+                    : (row.objective === 'OUTCOME_LEADS' ||
+                        row.objective === 'LEAD_GENERATION') &&
+                      row.insights &&
+                      row.insights.data &&
+                      row.insights.data[0].actions
+                    ? (
+                        row.insights.data[0].actions.find(
+                          (element) => element.action_type === 'lead'
+                        ) || {}
+                      ).value + ' Leads'
+                    : (row.objective === 'LINK_CLICKS' ||
+                        row.objective === 'OUTCOME_TRAFFIC') &&
+                      row.insights &&
+                      row.insights.data &&
+                      row.insights.data[0].actions
+                    ? (
+                        row.insights.data[0].actions.find(
+                          (element) => element.action_type === 'link_click'
+                        ) || {}
+                      ).value + ' Clicks'
+                    : 0}
+                </TableCell>
+                <TableCell align="center">
+                  $
+                  {(
+                    (row.insights ? row.insights.data[0].spend : 0) /
+                    parseFloat(
+                      row.objective === 'MESSAGES' &&
+                        row.insights &&
+                        row.insights.data &&
+                        row.insights.data[0].actions
+                        ? (
+                            row.insights.data[0].actions.find(
+                              (element) =>
+                                element.action_type ===
+                                'onsite_conversion.messaging_conversation_started_7d'
+                            ) || {}
+                          ).value
+                        : row.objective === 'OUTCOME_ENGAGEMENT' &&
+                          row.insights &&
+                          row.insights.data &&
+                          row.insights.data[0].actions
+                        ? (
+                            row.insights.data[0].actions.find(
+                              (element) => element.action_type === 'like'
+                            ) || {}
+                          ).value
+                        : (row.objective === 'OUTCOME_LEADS' ||
+                            row.objective === 'LEAD_GENERATION') &&
+                          row.insights &&
+                          row.insights.data &&
+                          row.insights.data[0].actions
+                        ? (
+                            row.insights.data[0].actions.find(
+                              (element) => element.action_type === 'lead'
+                            ) || {}
+                          ).value
+                        : (row.objective === 'LINK_CLICKS' ||
+                            row.objective === 'OUTCOME_TRAFFIC') &&
+                          row.insights &&
+                          row.insights.data &&
+                          row.insights.data[0].actions
+                        ? (
+                            row.insights.data[0].actions.find(
+                              (element) => element.action_type === 'link_click'
+                            ) || {}
+                          ).value
+                        : 1
+                    )
+                  ).toFixed(2)}
                 </TableCell>
                 <TableCell align="left">
                   <span className="status" style={makeStyle(row.status)}>

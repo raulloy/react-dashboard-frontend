@@ -35,7 +35,8 @@
 }
 
 .Table {
-  margin: 3rem 0;
+  margin: 0;
+  margin-top: 10px;
 }
 
 .Table td,
@@ -54,6 +55,30 @@ th {
 
 .Details {
   color: #00b5ff !important;
+}
+
+.popup-table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 100px;
+  padding-right: 10px;
+}
+
+.form-transparent {
+  background-color: transparent;
+  border: none;
+}
+
+.input-group-text {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+.input-transparent {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: -5px 0 10px rgba(0, 0, 0, 0.05) inset !important;
 }
 
 @media screen and (max-width: 1200px) {

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -27,7 +26,7 @@ export default function AccountsTable() {
       try {
         // Fetch Account Insights
         const accountsResponse = await axios.get(
-          `https://www.dashboard-aws.net/api/account-insights?since=${since}&until=${until}`
+          `/api/account-insights?since=${since}&until=${until}`
         );
         setAccountInsights(accountsResponse.data);
       } catch (err) {

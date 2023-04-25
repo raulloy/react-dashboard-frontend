@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,109 +7,176 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import './Table.css';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import axios from 'axios';
 
-const makeStyle = (status) => {
-  if (status === 'ACTIVE') {
-    return {
-      background: 'rgb(145 254 159 / 47%)',
-      color: 'green',
-    };
-  } else if (status === 'PAUSED') {
-    return {
-      background: '#ffadad8f',
-      color: 'red',
-    };
-  } else {
-    return {
-      background: '#59bfff',
-      color: 'white',
-    };
-  }
-};
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import { Modal, Button } from 'react-bootstrap';
+
+import { accountsData } from '../../data/facebook';
+import './Table.css';
 
 export default function BasicTable() {
-  const id = '930432200705578';
-  const [since, setSince] = useState('2023-02-01');
-  const [until, setUntil] = useState('2023-02-03');
+  const [since, setSince] = useState('2023-04-01');
+  const [until, setUntil] = useState('2023-04-15');
 
-  const [campaignInsights, setCampaignInsights] = useState([]);
-  // const [contacts, setContacts] = useState([]);
+  const [accountInsights, setAccountInsights] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch Campaign Insights
-        const campaignsResponse = await axios.get(
-          `https://www.dashboard-aws.net/api/campaign-insights/act_${id}?since=${since}&until=${until}`
-        );
-        setCampaignInsights(campaignsResponse.data.campaigns.data);
+        // Fetch Account Insights
+        const accountsResponse = await accountsData(since, until);
 
-        // Fetch Contacts
-        // const contactsResponse = await axios.get(
-        //   `/api/contacts-by-time-range?since=${since}&until=${until}`
-        // );
-        // setContacts(contactsResponse.data);
+        setAccountInsights(accountsResponse);
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
-  }, [id, since, until]);
+  }, [since, until]);
 
-  // console.log(campaignInsights);
-  // console.log(contacts);
+  const [show, setShow] = useState(false);
+  const [actions, setActions] = useState([]);
+
+  const handleClose = () => setShow(false);
+  const handleShow = (accountID) => {
+    const account = accountInsights.find(
+      (item) => item.account_id === accountID
+    );
+    setShow(true);
+    setActions(account.actions);
+  };
 
   return (
     <div className="Table">
-      <h3>Campaign Insights</h3>
+      <h3>Account Insights</h3>
+
+      <Form className="form-transparent">
+        <Row>
+          <Col sm={4} md={3} className="my-2">
+            <InputGroup size="sm" className="mb-3">
+              <InputGroup.Text>Desde</InputGroup.Text>
+              <Form.Control
+                type="date"
+                value={since}
+                onChange={(e) => setSince(e.target.value)}
+                className="input-transparent"
+              />
+            </InputGroup>
+          </Col>
+          <Col sm={4} md={3} className="my-2">
+            <InputGroup size="sm" className="mb-3">
+              <InputGroup.Text>Hasta</InputGroup.Text>
+              <Form.Control
+                type="date"
+                value={until}
+                onChange={(e) => setUntil(e.target.value)}
+                className="input-transparent"
+              />
+            </InputGroup>
+          </Col>
+        </Row>
+      </Form>
+
       <TableContainer
         component={Paper}
         style={{
           boxShadow: '0px 13px 20px 0px #80808029',
           overflow: 'auto',
+          backgroundColor: 'transparent',
         }}
-        sx={{ maxHeight: 400 }}
+        sx={{ maxHeight: 350 }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Campaña</TableCell>
-              <TableCell align="left">Objective</TableCell>
-              <TableCell align="left">Spend</TableCell>
-              <TableCell align="left">Status</TableCell>
-              <TableCell align="left">Assigments</TableCell>
+              <TableCell align="left">Desarrollo</TableCell>
+              <TableCell align="left">Alcance</TableCell>
+              <TableCell align="left">Impresiones</TableCell>
+              <TableCell align="left">Clics</TableCell>
+              <TableCell align="left">Gastado</TableCell>
+              <TableCell align="left">CPC</TableCell>
             </TableRow>
           </TableHead>
           <TableBody style={{ color: 'white' }}>
-            {campaignInsights.map((row) => (
+            {accountInsights.map((element) => (
               <TableRow
-                key={row.id}
+                key={element.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell align="left">{row.objective}</TableCell>
-                <TableCell align="left">
-                  ${row.insights ? row.insights.data[0].spend : 0}
+                  {element.account_name}
                 </TableCell>
                 <TableCell align="left">
-                  <span className="status" style={makeStyle(row.status)}>
-                    {row.status}
-                  </span>
+                  {parseInt(element.reach).toLocaleString('en-US')}
                 </TableCell>
-                <TableCell align="left" className="Details">
-                  Details
+                <TableCell align="left">
+                  {parseInt(element.impressions).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="left">
+                  {parseInt(element.clicks).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="left">
+                  ${parseFloat(element.spend).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="left">
+                  ${parseFloat(element.cpc).toFixed(2).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="center" className="Details">
+                  <Button
+                    onClick={() => handleShow(element.account_id)}
+                    style={{
+                      backgroundColor: '#52b1ff',
+                      borderColor: 'transparent',
+                    }}
+                  >
+                    Details
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Interacciones</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Tipos de interacción</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              {actions.length ? (
+                actions.map((action, index) => (
+                  <tr key={index}>
+                    <td>{action.action_type}</td>
+                    <td style={{ textAlign: 'center' }}>
+                      {parseInt(action.value).toLocaleString('en-US')}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="2">No actions found.</td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

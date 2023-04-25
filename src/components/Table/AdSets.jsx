@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useState, useContext } from 'react';
 
+import { Modal, Button } from 'react-bootstrap';
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,15 +11,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-import { Modal, Button } from 'react-bootstrap';
-
 import { accounts } from '../../data/data';
 import { DateDropdown } from '../DatePickers/DateDropdown';
-import { CampaignsDataStoreContext } from '../../data/CampaignsDataStore';
+import { AdSetsDataStoreContext } from '../../data/AdSetsDataStore';
 import { statusStyle } from './utils';
 import './Table.css';
 
-export default function CampaignsTable() {
+export default function AdSetsTable() {
   const {
     since,
     setSince,
@@ -27,7 +27,7 @@ export default function CampaignsTable() {
     setSelectedAccount,
     campaignInsights,
     contacts,
-  } = useContext(CampaignsDataStoreContext);
+  } = useContext(AdSetsDataStoreContext);
 
   const sortedCampaigns = campaignInsights.sort((a, b) => {
     if (a.status === 'ACTIVE' && b.status !== 'ACTIVE') {
@@ -39,17 +39,21 @@ export default function CampaignsTable() {
     }
   });
 
+  const adsetsData = sortedCampaigns
+    .map((element) => (element.adsets ? element.adsets.data : []))
+    .flat();
+
   const contactsbyCampaign = contacts.map(({ id, properties }) => ({
     id,
     hs_analytics_first_url: properties.hs_analytics_first_url
-      ? properties.hs_analytics_first_url.match(/hsa_cam=(\d+)/)?.[1]
+      ? properties.hs_analytics_first_url.match(/hsa_grp=(\d+)/)?.[1]
       : null,
   }));
 
   // console.log('contactsbyCampaign', contactsbyCampaign);
 
   const contactCountsByCampaign = contactsbyCampaign.reduce((acc, contact) => {
-    const campaign = campaignInsights.find(
+    const campaign = adsetsData.find(
       (c) => c.id === contact.hs_analytics_first_url
     );
     const campaignId = campaign ? campaign.id : 'unknown';
@@ -75,7 +79,6 @@ export default function CampaignsTable() {
     setShow(true);
 
     if (matchingContact) {
-      console.log(matchingContact);
       setContactsInfo(matchingContact);
     } else {
       console.log('No matching contact found.');
@@ -84,7 +87,7 @@ export default function CampaignsTable() {
 
   return (
     <div className="Table">
-      <h3>Campaign Insights</h3>
+      <h3>Ad Sets Insights</h3>
 
       <DateDropdown
         since={since}
@@ -109,121 +112,26 @@ export default function CampaignsTable() {
           <TableHead>
             <TableRow>
               <TableCell align="left">Campaña</TableCell>
-              <TableCell align="center">Objetivo</TableCell>
+              <TableCell align="left">Conjuntos de anuncios</TableCell>
               <TableCell align="left">Gastado</TableCell>
-              <TableCell align="left">Resultados</TableCell>
-              <TableCell align="left">Costo por resultados</TableCell>
-              <TableCell align="center">Estado</TableCell>
+              <TableCell align="left">Estado</TableCell>
               <TableCell align="left">Asignaciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody style={{ color: 'white' }}>
-            {sortedCampaigns.map((row) => (
+            {adsetsData.map((row) => (
               <TableRow
                 key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {row.campaign?.name}
                 </TableCell>
-                <TableCell align="center">{row.objective}</TableCell>
-                <TableCell align="center">
-                  $
-                  {parseFloat(
-                    row.insights ? row.insights.data[0].spend : 0
-                  ).toLocaleString('en-US')}
+                <TableCell component="th" scope="row">
+                  {row?.name}
                 </TableCell>
-                <TableCell align="center">
-                  {row.objective === 'MESSAGES' &&
-                  row.insights &&
-                  row.insights.data &&
-                  row.insights.data[0].actions
-                    ? (
-                        row.insights.data[0].actions.find(
-                          (element) =>
-                            element.action_type ===
-                            'onsite_conversion.messaging_conversation_started_7d'
-                        ) || {}
-                      ).value + ' Msgs'
-                    : row.objective === 'OUTCOME_ENGAGEMENT' &&
-                      row.insights &&
-                      row.insights.data &&
-                      row.insights.data[0].actions
-                    ? (
-                        row.insights.data[0].actions.find(
-                          (element) => element.action_type === 'like'
-                        ) || {}
-                      ).value + ' Likes'
-                    : (row.objective === 'OUTCOME_LEADS' ||
-                        row.objective === 'LEAD_GENERATION') &&
-                      row.insights &&
-                      row.insights.data &&
-                      row.insights.data[0].actions
-                    ? (
-                        row.insights.data[0].actions.find(
-                          (element) => element.action_type === 'lead'
-                        ) || {}
-                      ).value + ' Leads'
-                    : (row.objective === 'LINK_CLICKS' ||
-                        row.objective === 'OUTCOME_TRAFFIC') &&
-                      row.insights &&
-                      row.insights.data &&
-                      row.insights.data[0].actions
-                    ? (
-                        row.insights.data[0].actions.find(
-                          (element) => element.action_type === 'link_click'
-                        ) || {}
-                      ).value + ' Clicks'
-                    : 0}
-                </TableCell>
-                <TableCell align="center">
-                  $
-                  {(
-                    (row.insights ? row.insights.data[0].spend : 0) /
-                    parseFloat(
-                      row.objective === 'MESSAGES' &&
-                        row.insights &&
-                        row.insights.data &&
-                        row.insights.data[0].actions
-                        ? (
-                            row.insights.data[0].actions.find(
-                              (element) =>
-                                element.action_type ===
-                                'onsite_conversion.messaging_conversation_started_7d'
-                            ) || {}
-                          ).value
-                        : row.objective === 'OUTCOME_ENGAGEMENT' &&
-                          row.insights &&
-                          row.insights.data &&
-                          row.insights.data[0].actions
-                        ? (
-                            row.insights.data[0].actions.find(
-                              (element) => element.action_type === 'like'
-                            ) || {}
-                          ).value
-                        : (row.objective === 'OUTCOME_LEADS' ||
-                            row.objective === 'LEAD_GENERATION') &&
-                          row.insights &&
-                          row.insights.data &&
-                          row.insights.data[0].actions
-                        ? (
-                            row.insights.data[0].actions.find(
-                              (element) => element.action_type === 'lead'
-                            ) || {}
-                          ).value
-                        : (row.objective === 'LINK_CLICKS' ||
-                            row.objective === 'OUTCOME_TRAFFIC') &&
-                          row.insights &&
-                          row.insights.data &&
-                          row.insights.data[0].actions
-                        ? (
-                            row.insights.data[0].actions.find(
-                              (element) => element.action_type === 'link_click'
-                            ) || {}
-                          ).value
-                        : 1
-                    )
-                  ).toFixed(2)}
+                <TableCell align="left">
+                  ${row.insights ? row.insights.data[0].spend : 0}
                 </TableCell>
                 <TableCell align="left">
                   <span className="status" style={statusStyle(row.status)}>

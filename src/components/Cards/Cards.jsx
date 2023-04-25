@@ -1,41 +1,55 @@
+import React, { useContext } from 'react';
+import { AccountsDataStoreContext } from '../../data/AccountsDataStore';
+import { FaRegBuilding } from 'react-icons/fa';
+import Card from '../Card/Card';
 import './Cards.css';
-import { cardsData } from '../../data';
-import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import DateRangeInput from '../DatePickers/DateRangeInput';
 
 const Cards = () => {
+  const { since, setSince, until, setUntil, accountInsights } = useContext(
+    AccountsDataStoreContext
+  );
+
+  const grandTotal = accountInsights.reduce((total, element) => {
+    return total + parseFloat(element.spend);
+  }, 0);
+
+  const accounts = accountInsights.map((element) => element.account_name);
+  const spendByAccount = accountInsights.map((element) => element.spend);
+
   return (
-    <div className="Cards">
-      {cardsData.map((card, id) => {
-        return (
-          <div className="parentContainer" key={id}>
-            <Card sx={{ minWidth: 275 }}>
-              <CardContent>
-                <Typography
-                  sx={{ fontSize: 14 }}
-                  color="text.secondary"
-                  gutterBottom
-                >
-                  {card.title}
-                </Typography>
-                {/* <Typography variant="h5" component="div">benevolent</Typography> */}
-                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                  {card.value}
-                </Typography>
-                {/* <Typography variant="body2">well meaning and kindly.<br /></Typography> */}
-              </CardContent>
-              <CardActions>
-                <Button size="small">Details</Button>
-              </CardActions>
-            </Card>
-          </div>
-        );
-      })}
-    </div>
+    <>
+      <DateRangeInput
+        since={since}
+        setSince={setSince}
+        until={until}
+        setUntil={setUntil}
+      />
+
+      <div className="Cards">
+        <div className="parentContainer">
+          <Card
+            title="Total Gastado"
+            color={{
+              backGround: 'linear-gradient(180deg, #bb67ff 0%, #c484f3 100%)',
+              boxShadow: '0px 10px 20px 0px #e0c6f5',
+            }}
+            barValue={60}
+            value={grandTotal.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+            })}
+            png={FaRegBuilding}
+            series={[
+              {
+                name: 'Sales',
+                data: spendByAccount,
+              },
+            ]}
+            accounts={accounts}
+          />
+        </div>
+      </div>
+    </>
   );
 };
 

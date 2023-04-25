@@ -1,10 +1,11 @@
 // Sidebar imports
 import { FaRegBuilding, FaRegFolder } from 'react-icons/fa';
-import { FiLogIn } from 'react-icons/fi';
-import { MdOutlineSpaceDashboard } from 'react-icons/md';
+// import { FiLogIn } from 'react-icons/fi';
+import { MdOutlineSpaceDashboard, MdOutlineAnalytics } from 'react-icons/md';
 
 // Recent Card Imports
 import img1 from '../images/profile.png';
+
 // Sidebar Data
 export const SidebarData = [
   // {
@@ -27,9 +28,14 @@ export const SidebarData = [
     path: '/ad-sets',
   },
   {
-    icon: FiLogIn,
-    heading: 'Logout',
+    icon: MdOutlineAnalytics,
+    heading: 'Campaign Analytics',
+    path: '/campaign-analytics',
   },
+  // {
+  //   icon: FiLogIn,
+  //   heading: 'Logout',
+  // },
 ];
 
 // Analytics Cards Data
@@ -70,7 +76,7 @@ export const cardsData = [
   },
   {
     id: '3',
-    title: 'Expenses',
+    title: 'Importe Gastado',
     color: {
       backGround:
         'linear-gradient(rgb(248, 212, 154) -146.42%, rgb(255 202 113) -46.42%)',
@@ -79,9 +85,18 @@ export const cardsData = [
     barValue: 60,
     value: '4,270',
     png: FaRegBuilding,
+    accounts: [
+      '2018-09-19T00:00:00.000Z',
+      '2018-09-19T01:30:00.000Z',
+      '2018-09-19T02:30:00.000Z',
+      '2018-09-19T03:30:00.000Z',
+      '2018-09-19T04:30:00.000Z',
+      '2018-09-19T05:30:00.000Z',
+      '2018-09-19T06:30:00.000Z',
+    ],
     series: [
       {
-        name: 'Expenses',
+        name: 'Importe Gastado',
         data: [10, 25, 15, 30, 12, 15, 20],
       },
     ],
