@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Cards from '../Cards/Cards';
 import Accounts from '../Table/Accounts';
 import Campaigns from '../Table/Campaigns';
 import AdSets from '../Table/AdSets';
@@ -13,9 +12,6 @@ const MainDash = () => {
   return (
     <div className="MainDash">
       <h2>Admin Dashboard</h2>
-      <AccountsDataStore>
-        <Cards />
-      </AccountsDataStore>
       <Routes>
         <Route
           path="/"

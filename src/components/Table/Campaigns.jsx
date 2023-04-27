@@ -30,13 +30,16 @@ export default function CampaignsTable() {
   } = useContext(CampaignsDataStoreContext);
 
   const sortedCampaigns = campaignInsights.sort((a, b) => {
-    if (a.status === 'ACTIVE' && b.status !== 'ACTIVE') {
-      return -1; // a comes before b
-    } else if (b.status === 'ACTIVE' && a.status !== 'ACTIVE') {
-      return 1; // b comes before a
-    } else {
-      return 0; // leave them in the same order
+    // Compare the "spend" properties of the two objects
+    const aSpend = parseFloat(a.insights ? a.insights.data[0].spend : 0);
+    const bSpend = parseFloat(b.insights ? b.insights.data[0].spend : 0);
+    if (aSpend > 0 && bSpend <= 0) {
+      return -1; // a comes first
+    } else if (aSpend <= 0 && bSpend > 0) {
+      return 1; // b comes first
     }
+
+    return 0; // No changes to order
   });
 
   const contactsbyCampaign = contacts.map(({ id, properties }) => ({
@@ -75,7 +78,7 @@ export default function CampaignsTable() {
     setShow(true);
 
     if (matchingContact) {
-      console.log(matchingContact);
+      // console.log(matchingContact);
       setContactsInfo(matchingContact);
     } else {
       console.log('No matching contact found.');
@@ -103,7 +106,7 @@ export default function CampaignsTable() {
           overflow: 'auto',
           backgroundColor: 'transparent',
         }}
-        sx={{ maxHeight: 350 }}
+        sx={{ maxHeight: 350, maxWidth: 1000 }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -115,6 +118,11 @@ export default function CampaignsTable() {
               <TableCell align="left">Costo por resultados</TableCell>
               <TableCell align="center">Estado</TableCell>
               <TableCell align="left">Asignaciones</TableCell>
+              <TableCell align="left">Alcance</TableCell>
+              <TableCell align="left">Impresiones</TableCell>
+              <TableCell align="left">Clics</TableCell>
+              <TableCell align="left">CPC</TableCell>
+              <TableCell align="left">CTR</TableCell>
             </TableRow>
           </TableHead>
           <TableBody style={{ color: 'white' }}>
@@ -237,6 +245,31 @@ export default function CampaignsTable() {
                       0
                     )}
                   </Button>
+                </TableCell>
+                <TableCell align="center">
+                  {parseInt(
+                    row.insights ? row.insights.data[0].reach : 0
+                  ).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="center">
+                  {parseInt(
+                    row.insights ? row.insights.data[0].impressions : 0
+                  ).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="center">
+                  {parseInt(
+                    row.insights ? row.insights.data[0].clicks : 0
+                  ).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="center">
+                  {parseFloat(
+                    row.insights ? row.insights.data[0].cpc : 0
+                  ).toFixed(2)}
+                </TableCell>
+                <TableCell align="center">
+                  {parseFloat(
+                    row.insights ? row.insights.data[0].ctr : 0
+                  ).toFixed(2)}
                 </TableCell>
               </TableRow>
             ))}

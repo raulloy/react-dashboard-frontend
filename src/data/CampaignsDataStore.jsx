@@ -6,8 +6,8 @@ import { accounts } from './data';
 const CampaignsDataStoreContext = createContext();
 
 const CampaignsDataStore = ({ children }) => {
-  const [since, setSince] = useState('2023-04-01');
-  const [until, setUntil] = useState('2023-04-15');
+  const [since, setSince] = useState('2023-04-15');
+  const [until, setUntil] = useState('2023-04-30');
 
   const [selectedAccount, setSelectedAccount] = useState(accounts[0].id);
   const [campaignInsights, setCampaignInsights] = useState([]);

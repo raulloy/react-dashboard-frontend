@@ -14,6 +14,8 @@ import { AccountsDataStoreContext } from '../../data/AccountsDataStore';
 
 import './Table.css';
 
+import Cards from '../Cards/Cards';
+
 export default function AccountsTable() {
   const { since, setSince, until, setUntil, accountInsights } = useContext(
     AccountsDataStoreContext
@@ -32,117 +34,125 @@ export default function AccountsTable() {
   };
 
   return (
-    <div className="Table">
-      <h3>Account Insights</h3>
+    <>
+      <Cards />
 
-      <DateRangeInput
-        since={since}
-        setSince={setSince}
-        until={until}
-        setUntil={setUntil}
-      />
+      <div className="Table">
+        <h3>Account Insights</h3>
 
-      <TableContainer
-        component={Paper}
-        style={{
-          boxShadow: '0px 13px 20px 0px #80808029',
-          overflow: 'auto',
-          backgroundColor: 'transparent',
-        }}
-        sx={{ maxHeight: 350 }}
-      >
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">Desarrollo</TableCell>
-              <TableCell align="left">Alcance</TableCell>
-              <TableCell align="left">Impresiones</TableCell>
-              <TableCell align="left">Clics</TableCell>
-              <TableCell align="left">Gastado</TableCell>
-              <TableCell align="left">CPC</TableCell>
-              <TableCell align="left">CTR</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody style={{ color: 'white' }}>
-            {accountInsights.map((element) => (
-              <TableRow
-                key={element.id}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {element.account_name}
-                </TableCell>
-                <TableCell align="left">
-                  {parseInt(element.reach).toLocaleString('en-US')}
-                </TableCell>
-                <TableCell align="left">
-                  {parseInt(element.impressions).toLocaleString('en-US')}
-                </TableCell>
-                <TableCell align="left">
-                  {parseInt(element.clicks).toLocaleString('en-US')}
-                </TableCell>
-                <TableCell align="left">
-                  ${parseFloat(element.spend).toLocaleString('en-US')}
-                </TableCell>
-                <TableCell align="left">
-                  ${parseFloat(element.cpc).toFixed(2).toLocaleString('en-US')}
-                </TableCell>
-                <TableCell align="left">
-                  ${parseFloat(element.ctr).toFixed(2).toLocaleString('en-US')}
-                </TableCell>
-                <TableCell align="center" className="Details">
-                  <Button
-                    onClick={() => handleShow(element.account_id)}
-                    style={{
-                      backgroundColor: '#52b1ff',
-                      borderColor: 'transparent',
-                    }}
-                  >
-                    Details
-                  </Button>
-                </TableCell>
+        <DateRangeInput
+          since={since}
+          setSince={setSince}
+          until={until}
+          setUntil={setUntil}
+        />
+
+        <TableContainer
+          component={Paper}
+          style={{
+            boxShadow: '0px 13px 20px 0px #80808029',
+            overflow: 'auto',
+            backgroundColor: 'transparent',
+          }}
+          sx={{ maxHeight: 350 }}
+        >
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">Desarrollo</TableCell>
+                <TableCell align="left">Alcance</TableCell>
+                <TableCell align="left">Impresiones</TableCell>
+                <TableCell align="left">Clics</TableCell>
+                <TableCell align="left">Gastado</TableCell>
+                <TableCell align="left">CPC</TableCell>
+                <TableCell align="left">CTR</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Interacciones</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Tipos de interacción</th>
-                <th>Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {actions.length ? (
-                actions.map((action, index) => (
-                  <tr key={index}>
-                    <td>{action.action_type}</td>
-                    <td style={{ textAlign: 'center' }}>
-                      {parseInt(action.value).toLocaleString('en-US')}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="2">No actions found.</td>
-                </tr>
-              )}
-            </tbody>
+            </TableHead>
+            <TableBody style={{ color: 'white' }}>
+              {accountInsights.map((element) => (
+                <TableRow
+                  key={element.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {element.account_name}
+                  </TableCell>
+                  <TableCell align="left">
+                    {parseInt(element.reach).toLocaleString('en-US')}
+                  </TableCell>
+                  <TableCell align="left">
+                    {parseInt(element.impressions).toLocaleString('en-US')}
+                  </TableCell>
+                  <TableCell align="left">
+                    {parseInt(element.clicks).toLocaleString('en-US')}
+                  </TableCell>
+                  <TableCell align="left">
+                    ${parseFloat(element.spend).toLocaleString('en-US')}
+                  </TableCell>
+                  <TableCell align="left">
+                    $
+                    {parseFloat(element.cpc).toFixed(2).toLocaleString('en-US')}
+                  </TableCell>
+                  <TableCell align="left">
+                    $
+                    {parseFloat(element.ctr).toFixed(2).toLocaleString('en-US')}
+                  </TableCell>
+                  <TableCell align="center" className="Details">
+                    <Button
+                      onClick={() => handleShow(element.account_id)}
+                      style={{
+                        backgroundColor: '#52b1ff',
+                        borderColor: 'transparent',
+                      }}
+                    >
+                      Details
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
           </Table>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+        </TableContainer>
+
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Interacciones</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div style={{ overflowX: 'auto' }}>
+              <Table>
+                <thead>
+                  <tr style={{ textAlign: 'center' }}>
+                    <th>Tipos de interacción</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {actions.length ? (
+                    actions.map((action, index) => (
+                      <tr key={index} style={{ textAlign: 'center' }}>
+                        <td>{action.action_type}</td>
+                        <td>
+                          {parseInt(action.value).toLocaleString('en-US')}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="2">No actions found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+    </>
   );
 }

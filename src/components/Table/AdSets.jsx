@@ -29,19 +29,28 @@ export default function AdSetsTable() {
     contacts,
   } = useContext(AdSetsDataStoreContext);
 
-  const sortedCampaigns = campaignInsights.sort((a, b) => {
-    if (a.status === 'ACTIVE' && b.status !== 'ACTIVE') {
-      return -1; // a comes before b
-    } else if (b.status === 'ACTIVE' && a.status !== 'ACTIVE') {
-      return 1; // b comes before a
-    } else {
-      return 0; // leave them in the same order
-    }
-  });
-
-  const adsetsData = sortedCampaigns
+  const adsetsData = campaignInsights
     .map((element) => (element.adsets ? element.adsets.data : []))
-    .flat();
+    .flat()
+    .sort((a, b) => {
+      if (
+        a.insights &&
+        a.insights.data &&
+        a.insights.data[0] &&
+        parseFloat(a.insights.data[0].spend) > 0
+      ) {
+        return -1;
+      } else if (
+        b.insights &&
+        b.insights.data &&
+        b.insights.data[0] &&
+        parseFloat(b.insights.data[0].spend) > 0
+      ) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
 
   const contactsbyCampaign = contacts.map(({ id, properties }) => ({
     id,
@@ -106,7 +115,7 @@ export default function AdSetsTable() {
           overflow: 'auto',
           backgroundColor: 'transparent',
         }}
-        sx={{ maxHeight: 350 }}
+        sx={{ maxHeight: 350, maxWidth: 1000 }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -116,6 +125,11 @@ export default function AdSetsTable() {
               <TableCell align="left">Gastado</TableCell>
               <TableCell align="left">Estado</TableCell>
               <TableCell align="left">Asignaciones</TableCell>
+              <TableCell align="left">Alcance</TableCell>
+              <TableCell align="left">Impresiones</TableCell>
+              <TableCell align="left">Clics</TableCell>
+              <TableCell align="left">CPC</TableCell>
+              <TableCell align="left">CTR</TableCell>
             </TableRow>
           </TableHead>
           <TableBody style={{ color: 'white' }}>
@@ -145,6 +159,31 @@ export default function AdSetsTable() {
                       0
                     )}
                   </Button>
+                </TableCell>
+                <TableCell align="center">
+                  {parseInt(
+                    row.insights ? row.insights.data[0].reach : 0
+                  ).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="center">
+                  {parseInt(
+                    row.insights ? row.insights.data[0].impressions : 0
+                  ).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="center">
+                  {parseInt(
+                    row.insights ? row.insights.data[0].clicks : 0
+                  ).toLocaleString('en-US')}
+                </TableCell>
+                <TableCell align="center">
+                  {parseFloat(
+                    row.insights ? row.insights.data[0].cpc : 0
+                  ).toFixed(2)}
+                </TableCell>
+                <TableCell align="center">
+                  {parseFloat(
+                    row.insights ? row.insights.data[0].ctr : 0
+                  ).toFixed(2)}
                 </TableCell>
               </TableRow>
             ))}
@@ -209,3 +248,63 @@ export default function AdSetsTable() {
     </div>
   );
 }
+
+// const campaignInsights = [
+//   {
+//     name: 'Lomas de la Plata-Oro/IGStoriesCon/Leads/26-04-2023',
+//     account_id: '930432200705578',
+//     campaign_id: '23854211679280359',
+//     campaign: {
+//       name: 'Lomas de la Plata-Oro/IGStoriesCam/Leads/26-04-2023',
+//       id: '23854211679280359',
+//     },
+//     status: 'ACTIVE',
+//     id: '23854211679290359',
+//   },
+//   {
+//     name: 'Lomas de la Plata-General/FbCon/Leads/20-04-23',
+//     account_id: '930432200705578',
+//     campaign_id: '23854126524780359',
+//     campaign: {
+//       name: 'Lomas de la Plata-General/FbCam/Leads/20-04-23',
+//       id: '23854126524780359',
+//     },
+//     status: 'ACTIVE',
+//     insights: {
+//       data: [
+//         {
+//           reach: '53509',
+//           clicks: '534',
+//           impressions: '76121',
+//           spend: '2241.12',
+//           cpc: '4.196854',
+//           ctr: '0.701515',
+//         },
+//       ],
+//     },
+//     id: '23854126525510359',
+//   },
+//   {
+//     name: 'Lomas de la Plata- Platino/FBCon/Leads/RMK/01-03-23',
+//     account_id: '930432200705578',
+//     campaign_id: '23854112376210359',
+//     campaign: {
+//       name: 'Lomas de la Plata- Platino/FBCam/Leads/RMK/01-03-23',
+//       id: '23854112376210359',
+//     },
+//     status: 'ACTIVE',
+//     insights: {
+//       data: [
+//         {
+//           reach: '15200',
+//           clicks: '412',
+//           impressions: '19839',
+//           spend: '2289.83',
+//           cpc: '5.55784',
+//           ctr: '2.076718',
+//         },
+//       ],
+//     },
+//     id: '23854112398650359',
+//   },
+// ];
