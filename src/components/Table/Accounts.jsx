@@ -66,6 +66,8 @@ export default function AccountsTable() {
                 <TableCell align="left">Gastado</TableCell>
                 <TableCell align="left">CPC</TableCell>
                 <TableCell align="left">CTR</TableCell>
+                <TableCell align="left">Leads</TableCell>
+                <TableCell align="left">CPL</TableCell>
               </TableRow>
             </TableHead>
             <TableBody style={{ color: 'white' }}>
@@ -96,6 +98,30 @@ export default function AccountsTable() {
                   <TableCell align="left">
                     $
                     {parseFloat(element.ctr).toFixed(2).toLocaleString('en-US')}
+                  </TableCell>
+                  <TableCell align="left">
+                    {
+                      (
+                        element.actions.find(
+                          (element) => element.action_type === 'lead'
+                        ) || {}
+                      ).value
+                    }
+                  </TableCell>
+                  <TableCell align="left">
+                    $
+                    {(
+                      parseFloat(element.spend) /
+                      parseFloat(
+                        (
+                          element.actions.find(
+                            (element) => element.action_type === 'lead'
+                          ) || {}
+                        ).value
+                      )
+                    )
+                      .toFixed(2)
+                      .toLocaleString('en-US')}
                   </TableCell>
                   <TableCell align="center" className="Details">
                     <Button

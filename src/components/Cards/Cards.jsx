@@ -17,9 +17,31 @@ const Cards = () => {
     accountInsights.reduce((acc, curr) => acc + parseFloat(curr.cpc), 0) /
     accountInsights.length;
 
+  // Calculate the Average CPL
+  const avgCPL =
+    accountInsights.reduce(
+      (acc, curr) =>
+        acc +
+        parseFloat(
+          (curr.actions.find((element) => element.action_type === 'lead') || {})
+            .value
+        ),
+      0
+    ) / accountInsights.length;
+
   const accounts = accountInsights.map((element) => element.account_name);
   const spendByAccount = accountInsights.map((element) => element.spend);
   const cpcByAccount = accountInsights.map((element) => element.cpc);
+  const cplByAccount = accountInsights.map(
+    (element) =>
+      parseFloat(element.spend) /
+      parseFloat(
+        (
+          element.actions.find((element) => element.action_type === 'lead') ||
+          {}
+        ).value
+      )
+  );
 
   return (
     <div className="Cards">
@@ -46,7 +68,7 @@ const Cards = () => {
       </div>
       <div className="parentContainer">
         <Card
-          title="CPC"
+          title="CPC (avg)"
           color={{
             backGround: 'linear-gradient(180deg, #FF919D 0%, #FC929D 100%)',
             boxShadow: '0px 10px 20px 0px #FDC0C7',
@@ -58,6 +80,26 @@ const Cards = () => {
             {
               name: 'CPC',
               data: cpcByAccount,
+            },
+          ]}
+          accounts={accounts}
+        />
+      </div>
+      <div className="parentContainer">
+        <Card
+          title="CPL (avg)"
+          color={{
+            backGround:
+              'linear-gradient(rgb(248, 212, 154) -146.42%, rgb(255 202 113) -46.42%)',
+            boxShadow: '0px 10px 20px 0px #F9D59B',
+          }}
+          barValue={60}
+          value={avgCPL.toFixed(2)}
+          png={FaRegBuilding}
+          series={[
+            {
+              name: 'CPL',
+              data: cplByAccount,
             },
           ]}
           accounts={accounts}
