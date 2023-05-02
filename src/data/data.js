@@ -1,7 +1,7 @@
 // Sidebar imports
-import { FaRegBuilding, FaRegFolder } from 'react-icons/fa';
+import { FaRegBuilding, FaRegFolder, FaRegSquare } from 'react-icons/fa';
+import { MdOutlineSpaceDashboard } from 'react-icons/md';
 // import { FiLogIn } from 'react-icons/fi';
-import { MdOutlineSpaceDashboard, MdOutlineAnalytics } from 'react-icons/md';
 
 // Recent Card Imports
 import img1 from '../images/profile.png';
@@ -28,9 +28,9 @@ export const SidebarData = [
     path: '/ad-sets',
   },
   {
-    icon: MdOutlineAnalytics,
-    heading: 'Campaign Analytics',
-    path: '/campaign-analytics',
+    icon: FaRegSquare,
+    heading: 'Ads',
+    path: '/ads',
   },
   // {
   //   icon: FiLogIn,

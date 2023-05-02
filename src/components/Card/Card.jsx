@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import './Card.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { motion, AnimateSharedLayout } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
 import Chart from 'react-apexcharts';
+import './Card.css';
 
 // parent Card
 
@@ -58,7 +58,6 @@ function ExpandedCard({ param, setExpanded }) {
         type: 'area',
         height: 'auto',
       },
-
       dropShadow: {
         enabled: false,
         enabledOnSeries: undefined,
@@ -68,7 +67,6 @@ function ExpandedCard({ param, setExpanded }) {
         color: '#000',
         opacity: 0.35,
       },
-
       fill: {
         colors: ['#fff'],
         type: 'gradient',
@@ -81,26 +79,64 @@ function ExpandedCard({ param, setExpanded }) {
         background: {
           enabled: false,
         },
+        formatter: function (value) {
+          return '$' + value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        },
       },
       stroke: {
         curve: 'smooth',
+        width: 2,
         colors: ['white'],
       },
-      // tooltip: {
-      //   x: {
-      //     format: 'dd/MM/yy',
-      //   },
-      // },
+      tooltip: {
+        y: {
+          // format y axis as money
+          formatter: function (value) {
+            return '$' + value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+          },
+        },
+      },
       grid: {
         show: false,
       },
       xaxis: {
         type: 'category',
         categories: param.accounts,
+        labels: {
+          style: {
+            fontSize: '9px',
+          },
+        },
       },
       yaxis: {
         show: false,
       },
+      responsive: [
+        {
+          breakpoint: 576, // mobile
+          options: {
+            chart: {
+              height: '240px',
+            },
+          },
+        },
+        {
+          breakpoint: 768, // tablet
+          options: {
+            chart: {
+              height: '260px',
+            },
+          },
+        },
+        // {
+        //   breakpoint: 992, // desktop
+        //   options: {
+        //     chart: {
+        //       height: '500px',
+        //     },
+        //   },
+        // },
+      ],
     },
   };
 

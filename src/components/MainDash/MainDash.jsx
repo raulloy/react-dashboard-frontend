@@ -3,9 +3,11 @@ import { Route, Routes } from 'react-router-dom';
 import Accounts from '../Table/Accounts';
 import Campaigns from '../Table/Campaigns';
 import AdSets from '../Table/AdSets';
+import Ads from '../Table/Ads';
 import { AccountsDataStore } from '../../data/AccountsDataStore';
 import { CampaignsDataStore } from '../../data/CampaignsDataStore';
 import { AdSetsDataStore } from '../../data/AdSetsDataStore';
+import { AdsDataStore } from '../../data/AdsDataStore';
 import './MainDash.css';
 
 const MainDash = () => {
@@ -43,6 +45,14 @@ const MainDash = () => {
             <AdSetsDataStore>
               <AdSets />
             </AdSetsDataStore>
+          }
+        />
+        <Route
+          path="/ads"
+          element={
+            <AdsDataStore>
+              <Ads />
+            </AdsDataStore>
           }
         />
       </Routes>
