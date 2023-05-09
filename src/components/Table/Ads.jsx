@@ -28,7 +28,8 @@ export default function AdsTable() {
   } = useContext(AdsDataStoreContext);
 
   const adSetsInsights = campaignInsights
-    .map((element) => element.ads.data)
+    .map((element) => element.ads && element.ads.data)
+    .filter(Boolean)
     .flat();
 
   const grandTotalSpend = adSetsInsights.reduce((total, element) => {
@@ -124,7 +125,7 @@ export default function AdsTable() {
           overflow: 'auto',
           backgroundColor: 'transparent',
         }}
-        sx={{ maxHeight: 350, maxWidth: 1000 }}
+        sx={{ maxHeight: 350, maxWidth: 900 }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
