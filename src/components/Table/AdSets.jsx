@@ -127,7 +127,7 @@ export default function AdSetsTable() {
         sx={{ maxHeight: 350, maxWidth: 1000 }}
       >
         <Table
-          sx={{ maxHeight: 350, maxWidth: 1150 }}
+          sx={{ maxHeight: 350, maxWidth: 1000 }}
           aria-label="simple table"
         >
           <TableHead>

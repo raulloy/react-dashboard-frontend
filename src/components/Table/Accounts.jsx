@@ -55,7 +55,7 @@ export default function AccountsTable() {
             overflow: 'auto',
             backgroundColor: 'transparent',
           }}
-          sx={{ maxHeight: 350, maxWidth: 1150 }}
+          sx={{ maxHeight: 350, maxWidth: 1000 }}
         >
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
