@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { useState, useContext } from 'react';
-
 import { Modal, Button } from 'react-bootstrap';
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { TableFooter } from '@mui/material';
 import Paper from '@mui/material/Paper';
-
 import { accounts } from '../../data/data';
 import { DateDropdown } from '../DatePickers/DateDropdown';
 import { AdSetsDataStoreContext } from '../../data/AdSetsDataStore';
@@ -28,6 +26,17 @@ export default function AdSetsTable() {
     campaignInsights,
     contacts,
   } = useContext(AdSetsDataStoreContext);
+
+  const adSetsInsights = campaignInsights
+    .map((element) => element.adsets.data)
+    .flat();
+
+  const grandTotalSpend = adSetsInsights.reduce((total, element) => {
+    if (element.insights) {
+      return total + parseFloat(element.insights.data[0].spend);
+    }
+    return total;
+  }, 0);
 
   const adsetsData = campaignInsights
     .map((element) => (element.adsets ? element.adsets.data : []))
@@ -117,7 +126,10 @@ export default function AdSetsTable() {
         }}
         sx={{ maxHeight: 350, maxWidth: 1000 }}
       >
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table
+          sx={{ maxHeight: 350, maxWidth: 1150 }}
+          aria-label="simple table"
+        >
           <TableHead>
             <TableRow>
               <TableCell align="left">Campaña</TableCell>
@@ -144,7 +156,7 @@ export default function AdSetsTable() {
                 <TableCell component="th" scope="row">
                   {row?.name}
                 </TableCell>
-                <TableCell align="left">
+                <TableCell align="center">
                   ${row.insights ? row.insights.data[0].spend : 0}
                 </TableCell>
                 <TableCell align="left">
@@ -188,6 +200,17 @@ export default function AdSetsTable() {
               </TableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell align="left" style={{ fontWeight: 'bold' }}>
+                Grand Total
+              </TableCell>
+              <TableCell align="center"></TableCell>
+              <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                ${grandTotalSpend.toLocaleString('en-US')}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
       </TableContainer>
 

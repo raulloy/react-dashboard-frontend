@@ -9,35 +9,37 @@ const Cards = () => {
 
   // Calculate Grand Total Spend
   const grandTotalSpend = accountInsights.reduce((total, element) => {
-    return total + parseFloat(element.spend);
+    return total + parseFloat(element?.spend);
   }, 0);
 
   // Calculate the Average CPC
   const avgCPC =
-    accountInsights.reduce((acc, curr) => acc + parseFloat(curr.cpc), 0) /
+    accountInsights.reduce((acc, curr) => acc + parseFloat(curr?.cpc), 0) /
     accountInsights.length;
 
   // Calculate the Average CPL
-  const avgCPL =
-    accountInsights.reduce(
-      (acc, curr) =>
-        acc +
-        parseFloat(
-          (curr.actions.find((element) => element.action_type === 'lead') || {})
-            .value
-        ),
-      0
-    ) / accountInsights.length;
+  const costPerLeadArray = accountInsights.map(
+    (element) =>
+      element?.spend /
+      parseFloat(
+        element?.actions.find((element) => element.action_type === 'lead').value
+      )
+  );
 
-  const accounts = accountInsights.map((element) => element.account_name);
-  const spendByAccount = accountInsights.map((element) => element.spend);
-  const cpcByAccount = accountInsights.map((element) => element.cpc);
+  const totalCostPerLead = costPerLeadArray.reduce(
+    (accumulator, currentValue) => accumulator + currentValue
+  );
+  const avgCPL = totalCostPerLead / costPerLeadArray.length;
+
+  const accounts = accountInsights.map((element) => element?.account_name);
+  const spendByAccount = accountInsights.map((element) => element?.spend);
+  const cpcByAccount = accountInsights.map((element) => element?.cpc);
   const cplByAccount = accountInsights.map(
     (element) =>
-      parseFloat(element.spend) /
+      parseFloat(element?.spend) /
       parseFloat(
         (
-          element.actions.find((element) => element.action_type === 'lead') ||
+          element?.actions.find((element) => element.action_type === 'lead') ||
           {}
         ).value
       )

@@ -6,10 +6,17 @@ import { accounts } from './data';
 const AdSetsDataStoreContext = createContext();
 
 const AdSetsDataStore = ({ children }) => {
-  const [since, setSince] = useState('2023-04-15');
-  const [until, setUntil] = useState('2023-04-30');
+  const [since, setSince] = useState(
+    localStorage.getItem('since') || '2023-04-15'
+  );
+  const [until, setUntil] = useState(
+    localStorage.getItem('until') || '2023-04-30'
+  );
 
-  const [selectedAccount, setSelectedAccount] = useState(accounts[0].id);
+  const [selectedAccount, setSelectedAccount] = useState(
+    localStorage.getItem('selectedAccount') || accounts[0].id
+  );
+
   const [campaignInsights, setCampaignInsights] = useState([]);
   const [contacts, setContacts] = useState([]);
 
@@ -22,7 +29,9 @@ const AdSetsDataStore = ({ children }) => {
           since,
           until
         );
-        setCampaignInsights(campaignsResponse.data);
+        setCampaignInsights(
+          campaignsResponse.data.filter((element) => element !== null)
+        );
 
         // Fetch Contacts
         const contactsResponse = await contactsData(since, until);
@@ -32,7 +41,12 @@ const AdSetsDataStore = ({ children }) => {
       }
     };
     fetchData();
-  }, [selectedAccount, since, until]);
+
+    // Save variable values to local storage
+    localStorage.setItem('since', since);
+    localStorage.setItem('until', until);
+    localStorage.setItem('selectedAccount', selectedAccount);
+  }, [since, until, selectedAccount]);
 
   const store = {
     since,

@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { useState, useContext } from 'react';
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { TableFooter } from '@mui/material';
 import Paper from '@mui/material/Paper';
-
 import { Modal, Button } from 'react-bootstrap';
-
 import { accounts } from '../../data/data';
 import { DateDropdown } from '../DatePickers/DateDropdown';
 import { CampaignsDataStoreContext } from '../../data/CampaignsDataStore';
@@ -28,6 +26,13 @@ export default function CampaignsTable() {
     campaignInsights,
     contacts,
   } = useContext(CampaignsDataStoreContext);
+
+  const grandTotalSpend = campaignInsights.reduce((total, campaign) => {
+    if (campaign.insights) {
+      return total + parseFloat(campaign.insights.data[0].spend);
+    }
+    return total;
+  }, 0);
 
   const sortedCampaigns = campaignInsights.sort((a, b) => {
     // Compare the "spend" properties of the two objects
@@ -106,7 +111,7 @@ export default function CampaignsTable() {
           overflow: 'auto',
           backgroundColor: 'transparent',
         }}
-        sx={{ maxHeight: 350, maxWidth: 1000 }}
+        sx={{ maxHeight: 350, maxWidth: 1150 }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -115,7 +120,7 @@ export default function CampaignsTable() {
               <TableCell align="center">Objetivo</TableCell>
               <TableCell align="left">Gastado</TableCell>
               <TableCell align="left">Resultados</TableCell>
-              <TableCell align="left">Costo por resultados</TableCell>
+              <TableCell align="left">Costo</TableCell>
               <TableCell align="center">Estado</TableCell>
               <TableCell align="left">Asignaciones</TableCell>
               <TableCell align="left">Alcance</TableCell>
@@ -274,6 +279,17 @@ export default function CampaignsTable() {
               </TableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell align="left" style={{ fontWeight: 'bold' }}>
+                Grand Total
+              </TableCell>
+              <TableCell align="center"></TableCell>
+              <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                ${grandTotalSpend.toLocaleString('en-US')}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
       </TableContainer>
 

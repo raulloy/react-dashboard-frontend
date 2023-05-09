@@ -4,8 +4,12 @@ import { accountsData } from './facebook';
 const AccountsDataStoreContext = createContext();
 
 const AccountsDataStore = ({ children }) => {
-  const [since, setSince] = useState('2023-04-15');
-  const [until, setUntil] = useState('2023-04-30');
+  const [since, setSince] = useState(
+    localStorage.getItem('since') || '2023-04-15'
+  );
+  const [until, setUntil] = useState(
+    localStorage.getItem('until') || '2023-04-30'
+  );
 
   const [accountInsights, setAccountInsights] = useState([]);
 
@@ -15,18 +19,19 @@ const AccountsDataStore = ({ children }) => {
         // Fetch Account Insights
         const accountsResponse = await accountsData(since, until);
 
-        setAccountInsights(accountsResponse);
+        setAccountInsights(
+          accountsResponse.filter((element) => element !== null)
+        );
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
-  }, [since, until]);
 
-  // useEffect(() => {
-  //   console.log('since:', since);
-  //   console.log('until:', until);
-  // }, [since, until]);
+    // Save since and until values to local storage
+    localStorage.setItem('since', since);
+    localStorage.setItem('until', until);
+  }, [since, until]);
 
   const store = {
     since,

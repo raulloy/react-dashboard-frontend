@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { useState, useContext } from 'react';
-
 import { Modal, Button } from 'react-bootstrap';
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { TableFooter } from '@mui/material';
 import Paper from '@mui/material/Paper';
-
 import { accounts } from '../../data/data';
 import { DateDropdown } from '../DatePickers/DateDropdown';
 import { AdsDataStoreContext } from '../../data/AdsDataStore';
@@ -28,6 +26,17 @@ export default function AdsTable() {
     campaignInsights,
     contacts,
   } = useContext(AdsDataStoreContext);
+
+  const adSetsInsights = campaignInsights
+    .map((element) => element.ads.data)
+    .flat();
+
+  const grandTotalSpend = adSetsInsights.reduce((total, element) => {
+    if (element.insights) {
+      return total + parseFloat(element.insights.data[0].spend);
+    }
+    return total;
+  }, 0);
 
   const adsData = campaignInsights
     .map((element) => (element.ads ? element.ads.data : []))
@@ -115,7 +124,7 @@ export default function AdsTable() {
           overflow: 'auto',
           backgroundColor: 'transparent',
         }}
-        sx={{ maxHeight: 350, maxWidth: 1000 }}
+        sx={{ maxHeight: 350, maxWidth: 1150 }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -144,7 +153,7 @@ export default function AdsTable() {
                 <TableCell component="th" scope="row">
                   {row?.name}
                 </TableCell>
-                <TableCell align="left">
+                <TableCell align="center">
                   ${row.insights ? row.insights.data[0].spend : 0}
                 </TableCell>
                 <TableCell align="left">
@@ -188,6 +197,17 @@ export default function AdsTable() {
               </TableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell align="left" style={{ fontWeight: 'bold' }}>
+                Grand Total
+              </TableCell>
+              <TableCell align="center"></TableCell>
+              <TableCell align="center" style={{ fontWeight: 'bold' }}>
+                ${grandTotalSpend.toLocaleString('en-US')}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
       </TableContainer>
 

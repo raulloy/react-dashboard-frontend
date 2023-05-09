@@ -92,7 +92,7 @@
   .sidebar {
     position: fixed;
     z-index: 9;
-    background: #ffe0e0;
+    background: #cfecff;
     width: 55%;
     padding-right: 1rem;
     height: 100%;
@@ -112,7 +112,7 @@
     position: fixed;
     top: 2rem;
     left: 60%;
-    background: #ffe0e0;
+    background: #cfecff;
     padding: 10px;
     border-radius: 10px;
     z-index: 9;

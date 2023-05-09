@@ -1,6 +1,7 @@
 // Sidebar imports
 import { FaRegBuilding, FaRegFolder, FaRegSquare } from 'react-icons/fa';
 import { MdOutlineSpaceDashboard } from 'react-icons/md';
+import { TbReport } from 'react-icons/tb';
 // import { FiLogIn } from 'react-icons/fi';
 
 // Recent Card Imports
@@ -31,6 +32,11 @@ export const SidebarData = [
     icon: FaRegSquare,
     heading: 'Ads',
     path: '/ads',
+  },
+  {
+    icon: TbReport,
+    heading: 'Reporte General',
+    path: '/general-report',
   },
   // {
   //   icon: FiLogIn,

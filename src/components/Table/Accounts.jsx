@@ -7,14 +7,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-
 import { Modal, Button } from 'react-bootstrap';
 import DateRangeInput from '../DatePickers/DateRangeInput';
 import { AccountsDataStoreContext } from '../../data/AccountsDataStore';
-
-import './Table.css';
-
 import Cards from '../Cards/Cards';
+import './Table.css';
 
 export default function AccountsTable() {
   const { since, setSince, until, setUntil, accountInsights } = useContext(
@@ -33,8 +30,12 @@ export default function AccountsTable() {
     setActions(account.actions);
   };
 
+  if (accountInsights.length === 0) {
+    return <div>Getting data...</div>;
+  }
+
   return (
-    <>
+    <div>
       <Cards />
 
       <div className="Table">
@@ -54,7 +55,7 @@ export default function AccountsTable() {
             overflow: 'auto',
             backgroundColor: 'transparent',
           }}
-          sx={{ maxHeight: 350 }}
+          sx={{ maxHeight: 350, maxWidth: 1150 }}
         >
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -76,7 +77,11 @@ export default function AccountsTable() {
                   key={element.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell component="th" scope="row">
+                  <TableCell
+                    component="th"
+                    scope="row"
+                    style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}
+                  >
                     {element.account_name}
                   </TableCell>
                   <TableCell align="left">
@@ -179,6 +184,6 @@ export default function AccountsTable() {
           </Modal.Footer>
         </Modal>
       </div>
-    </>
+    </div>
   );
 }
