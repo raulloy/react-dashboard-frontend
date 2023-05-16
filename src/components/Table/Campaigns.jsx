@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useContext } from 'react';
+import { useState, useContext, useMemo } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,6 +13,7 @@ import { accounts } from '../../data/data';
 import { DateDropdown } from '../DatePickers/DateDropdown';
 import { CampaignsDataStoreContext } from '../../data/CampaignsDataStore';
 import { statusStyle } from './utils';
+import { Link } from 'react-router-dom';
 import './Table.css';
 
 export default function CampaignsTable() {
@@ -27,12 +28,14 @@ export default function CampaignsTable() {
     contacts,
   } = useContext(CampaignsDataStoreContext);
 
-  const grandTotalSpend = campaignInsights.reduce((total, campaign) => {
-    if (campaign.insights) {
-      return total + parseFloat(campaign.insights.data[0].spend);
-    }
-    return total;
-  }, 0);
+  const grandTotalSpend = useMemo(() => {
+    return campaignInsights.reduce((total, campaign) => {
+      if (campaign.insights) {
+        return total + parseFloat(campaign.insights.data[0].spend);
+      }
+      return total;
+    }, 0);
+  }, [campaignInsights]);
 
   const sortedCampaigns = campaignInsights.sort((a, b) => {
     // Compare the "spend" properties of the two objects
@@ -56,14 +59,16 @@ export default function CampaignsTable() {
 
   // console.log('contactsbyCampaign', contactsbyCampaign);
 
-  const contactCountsByCampaign = contactsbyCampaign.reduce((acc, contact) => {
-    const campaign = campaignInsights.find(
-      (c) => c.id === contact.hs_analytics_first_url
-    );
-    const campaignId = campaign ? campaign.id : 'unknown';
-    acc[campaignId] = (acc[campaignId] || 0) + 1;
-    return acc;
-  }, {});
+  const contactCountsByCampaign = useMemo(() => {
+    return contactsbyCampaign.reduce((acc, contact) => {
+      const campaign = campaignInsights.find(
+        (c) => c.id === contact.hs_analytics_first_url
+      );
+      const campaignId = campaign ? campaign.id : 'unknown';
+      acc[campaignId] = (acc[campaignId] || 0) + 1;
+      return acc;
+    }, {});
+  }, [campaignInsights, contactsbyCampaign]);
 
   // console.log('contactCountsByCampaign', contactCountsByCampaign);
 
@@ -82,12 +87,7 @@ export default function CampaignsTable() {
 
     setShow(true);
 
-    if (matchingContact) {
-      // console.log(matchingContact);
-      setContactsInfo(matchingContact);
-    } else {
-      console.log('No matching contact found.');
-    }
+    if (matchingContact) setContactsInfo(matchingContact);
   };
 
   return (
@@ -111,7 +111,7 @@ export default function CampaignsTable() {
           overflow: 'auto',
           backgroundColor: 'transparent',
         }}
-        sx={{ maxHeight: 350, maxWidth: 900 }}
+        sx={{ maxHeight: 350 }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -120,7 +120,7 @@ export default function CampaignsTable() {
               <TableCell align="center">Objetivo</TableCell>
               <TableCell align="left">Gastado</TableCell>
               <TableCell align="left">Resultados</TableCell>
-              <TableCell align="left">Costo</TableCell>
+              <TableCell align="left">Costo/Resultado</TableCell>
               <TableCell align="center">Estado</TableCell>
               <TableCell align="left">Asignaciones</TableCell>
               <TableCell align="left">Alcance</TableCell>
@@ -137,7 +137,7 @@ export default function CampaignsTable() {
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  <Link to={`/ad-sets/${row.id}`}>{row.name}</Link>
                 </TableCell>
                 <TableCell align="center">{row.objective}</TableCell>
                 <TableCell align="center">

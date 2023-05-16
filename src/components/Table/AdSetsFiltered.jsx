@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import Table from '@mui/material/Table';
@@ -9,28 +10,21 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { TableFooter } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import { accounts } from '../../data/data';
-import { DateDropdown } from '../DatePickers/DateDropdown';
 import { AdSetsDataStoreContext } from '../../data/AdSetsDataStore';
 import { statusStyle } from './utils';
+import DateRangeInput from '../DatePickers/DateRangeInput';
 import './Table.css';
-import { Link } from 'react-router-dom';
 
 export default function AdSetsTable() {
-  const {
-    since,
-    setSince,
-    until,
-    setUntil,
-    selectedAccount,
-    setSelectedAccount,
-    campaignInsights,
-    contacts,
-  } = useContext(AdSetsDataStoreContext);
+  const { since, setSince, until, setUntil, campaignInsights, contacts } =
+    useContext(AdSetsDataStoreContext);
+
+  const params = useParams();
+  const { campaign_id } = params;
 
   const adSetsInsights = campaignInsights
+    .filter((element) => element.adsets.data[0].campaign_id === campaign_id)
     .map((element) => element.adsets && element.adsets.data)
-    .filter(Boolean)
     .flat();
 
   const grandTotalSpend = adSetsInsights.reduce((total, element) => {
@@ -40,11 +34,10 @@ export default function AdSetsTable() {
     return total;
   }, 0);
 
-  // console.log(campaignInsights.slice(0, 3));
-
   const adsetsData = campaignInsights
     .map((element) => (element.adsets ? element.adsets.data : []))
     .flat()
+    .filter((element) => element.campaign_id === campaign_id)
     .sort((a, b) => {
       if (
         a.insights &&
@@ -65,40 +58,12 @@ export default function AdSetsTable() {
       }
     });
 
-  const transformedCampaigns = campaignInsights
-    .map((campaign) => {
-      const adsetData = campaign.adsets.data.map((adset) => {
-        const { name, account_id, campaign_id, status, insights, id } = adset;
-
-        const campaignObjective = campaign.objective;
-        const campaignData = adset.campaign;
-
-        return {
-          name,
-          account_id,
-          campaign_id,
-          objective: campaignObjective,
-          campaign: campaignData,
-          status,
-          insights,
-          id,
-        };
-      });
-
-      return adsetData;
-    })
-    .flat();
-
-  // console.log(transformedCampaigns);
-
   const contactsbyCampaign = contacts.map(({ id, properties }) => ({
     id,
     hs_analytics_first_url: properties.hs_analytics_first_url
       ? properties.hs_analytics_first_url.match(/hsa_grp=(\d+)/)?.[1]
       : null,
   }));
-
-  // console.log('contactsbyCampaign', contactsbyCampaign);
 
   const contactCountsByCampaign = contactsbyCampaign.reduce((acc, contact) => {
     const campaign = adsetsData.find(
@@ -108,8 +73,6 @@ export default function AdSetsTable() {
     acc[campaignId] = (acc[campaignId] || 0) + 1;
     return acc;
   }, {});
-
-  // console.log('contactCountsByCampaign', contactCountsByCampaign);
 
   const [show, setShow] = useState(false);
   const [contactsInfo, setContactsInfo] = useState([]);
@@ -137,14 +100,11 @@ export default function AdSetsTable() {
     <div className="Table">
       <h3>Ad Sets Insights</h3>
 
-      <DateDropdown
+      <DateRangeInput
         since={since}
         setSince={setSince}
         until={until}
         setUntil={setUntil}
-        accounts={accounts}
-        selectedAccount={selectedAccount}
-        setSelectedAccount={setSelectedAccount}
       />
 
       <TableContainer
@@ -161,10 +121,7 @@ export default function AdSetsTable() {
             <TableRow>
               <TableCell align="left">Campaña</TableCell>
               <TableCell align="left">Conjuntos de anuncios</TableCell>
-              <TableCell align="center">Objetivo</TableCell>
               <TableCell align="left">Gastado</TableCell>
-              <TableCell align="left">Resultados</TableCell>
-              <TableCell align="left">Costo/Resultado</TableCell>
               <TableCell align="left">Estado</TableCell>
               <TableCell align="left">Asignaciones</TableCell>
               <TableCell align="left">Alcance</TableCell>
@@ -175,7 +132,7 @@ export default function AdSetsTable() {
             </TableRow>
           </TableHead>
           <TableBody style={{ color: 'white' }}>
-            {transformedCampaigns.map((row) => (
+            {adsetsData.map((row) => (
               <TableRow
                 key={row.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -186,103 +143,8 @@ export default function AdSetsTable() {
                 <TableCell component="th" scope="row">
                   <Link to={`/ads/${row.id}`}>{row?.name}</Link>
                 </TableCell>
-                <TableCell component="th" scope="row">
-                  {row.objective}
-                </TableCell>
                 <TableCell align="center">
                   ${row.insights ? row.insights.data[0].spend : 0}
-                </TableCell>
-                <TableCell align="center">
-                  {row.objective === 'MESSAGES' &&
-                  row.insights &&
-                  row.insights.data &&
-                  row.insights.data[0].actions
-                    ? (
-                        row.insights.data[0].actions.find(
-                          (element) =>
-                            element.action_type ===
-                            'onsite_conversion.messaging_conversation_started_7d'
-                        ) || {}
-                      ).value + ' Msgs'
-                    : row.objective === 'OUTCOME_ENGAGEMENT' &&
-                      row.insights &&
-                      row.insights.data &&
-                      row.insights.data[0].actions
-                    ? (
-                        row.insights.data[0].actions.find(
-                          (element) => element.action_type === 'like'
-                        ) || {}
-                      ).value + ' Likes'
-                    : (row.objective === 'OUTCOME_LEADS' ||
-                        row.objective === 'LEAD_GENERATION') &&
-                      row.insights &&
-                      row.insights.data &&
-                      row.insights.data[0].actions
-                    ? (
-                        row.insights.data[0].actions.find(
-                          (element) => element.action_type === 'lead'
-                        ) || {}
-                      ).value + ' Leads'
-                    : (row.objective === 'LINK_CLICKS' ||
-                        row.objective === 'OUTCOME_TRAFFIC') &&
-                      row.insights &&
-                      row.insights.data &&
-                      row.insights.data[0].actions
-                    ? (
-                        row.insights.data[0].actions.find(
-                          (element) => element.action_type === 'link_click'
-                        ) || {}
-                      ).value + ' Clicks'
-                    : 0}
-                </TableCell>
-                <TableCell align="center">
-                  $
-                  {(
-                    (row.insights ? row.insights.data[0].spend : 0) /
-                    parseFloat(
-                      row.objective === 'MESSAGES' &&
-                        row.insights &&
-                        row.insights.data &&
-                        row.insights.data[0].actions
-                        ? (
-                            row.insights.data[0].actions.find(
-                              (element) =>
-                                element.action_type ===
-                                'onsite_conversion.messaging_conversation_started_7d'
-                            ) || {}
-                          ).value
-                        : row.objective === 'OUTCOME_ENGAGEMENT' &&
-                          row.insights &&
-                          row.insights.data &&
-                          row.insights.data[0].actions
-                        ? (
-                            row.insights.data[0].actions.find(
-                              (element) => element.action_type === 'like'
-                            ) || {}
-                          ).value
-                        : (row.objective === 'OUTCOME_LEADS' ||
-                            row.objective === 'LEAD_GENERATION') &&
-                          row.insights &&
-                          row.insights.data &&
-                          row.insights.data[0].actions
-                        ? (
-                            row.insights.data[0].actions.find(
-                              (element) => element.action_type === 'lead'
-                            ) || {}
-                          ).value
-                        : (row.objective === 'LINK_CLICKS' ||
-                            row.objective === 'OUTCOME_TRAFFIC') &&
-                          row.insights &&
-                          row.insights.data &&
-                          row.insights.data[0].actions
-                        ? (
-                            row.insights.data[0].actions.find(
-                              (element) => element.action_type === 'link_click'
-                            ) || {}
-                          ).value
-                        : 1
-                    )
-                  ).toFixed(2)}
                 </TableCell>
                 <TableCell align="left">
                   <span className="status" style={statusStyle(row.status)}>

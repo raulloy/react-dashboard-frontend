@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useParams } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import Table from '@mui/material/Table';
@@ -9,27 +10,21 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { TableFooter } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import { accounts } from '../../data/data';
-import { DateDropdown } from '../DatePickers/DateDropdown';
 import { AdsDataStoreContext } from '../../data/AdsDataStore';
 import { statusStyle } from './utils';
+import DateRangeInput from '../DatePickers/DateRangeInput';
 import './Table.css';
 
 export default function AdsTable() {
-  const {
-    since,
-    setSince,
-    until,
-    setUntil,
-    selectedAccount,
-    setSelectedAccount,
-    campaignInsights,
-    contacts,
-  } = useContext(AdsDataStoreContext);
+  const { since, setSince, until, setUntil, campaignInsights, contacts } =
+    useContext(AdsDataStoreContext);
+
+  const params = useParams();
+  const { adset_id } = params;
 
   const adSetsInsights = campaignInsights
+    .filter((element) => element.ads.data[0].adset_id === adset_id)
     .map((element) => element.ads && element.ads.data)
-    .filter(Boolean)
     .flat();
 
   const grandTotalSpend = adSetsInsights.reduce((total, element) => {
@@ -42,6 +37,7 @@ export default function AdsTable() {
   const adsData = campaignInsights
     .map((element) => (element.ads ? element.ads.data : []))
     .flat()
+    .filter((element) => element.adset_id === adset_id)
     .sort((a, b) => {
       if (
         a.insights &&
@@ -69,8 +65,6 @@ export default function AdsTable() {
       : null,
   }));
 
-  // console.log('contactsbyCampaign', contactsbyCampaign);
-
   const contactCountsByCampaign = contactsbyCampaign.reduce((acc, contact) => {
     const campaign = adsData.find(
       (c) => c.id === contact.hs_analytics_first_url
@@ -79,8 +73,6 @@ export default function AdsTable() {
     acc[campaignId] = (acc[campaignId] || 0) + 1;
     return acc;
   }, {});
-
-  // console.log('contactCountsByCampaign', contactCountsByCampaign);
 
   const [show, setShow] = useState(false);
   const [contactsInfo, setContactsInfo] = useState([]);
@@ -108,14 +100,11 @@ export default function AdsTable() {
     <div className="Table">
       <h3>Ad Sets Insights</h3>
 
-      <DateDropdown
+      <DateRangeInput
         since={since}
         setSince={setSince}
         until={until}
         setUntil={setUntil}
-        accounts={accounts}
-        selectedAccount={selectedAccount}
-        setSelectedAccount={setSelectedAccount}
       />
 
       <TableContainer

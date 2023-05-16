@@ -2,7 +2,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './App.css';
 import Sidebar from './components/Sidebar/Sidebar';
 import MainDash from './components/MainDash/MainDash';
-// import RightSide from './components/RightSide/RightSide';
+import RightSide from './components/RightSide/RightSide';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         <BrowserRouter>
           <Sidebar />
           <MainDash />
-          {/* <RightSide /> */}
+          <RightSide />
         </BrowserRouter>
       </div>
     </div>
