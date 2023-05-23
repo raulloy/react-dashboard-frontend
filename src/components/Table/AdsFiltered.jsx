@@ -23,15 +23,15 @@ export default function AdsTable() {
   const { adset_id } = params;
 
   const adSetsInsights = campaignInsights
-    .map((element) => element.adsets.data)
+    .map((element) => element.adsets?.data)
     .flat()
-    .filter((element) => element.ads.data[0].adset_id === adset_id)
+    .filter((element) => element.ads?.data[0]?.adset_id === adset_id)
     .map((element) => element.ads && element.ads.data)
     .flat();
 
   const grandTotalSpend = adSetsInsights.reduce((total, element) => {
     if (element.insights) {
-      return total + parseFloat(element.insights.data[0].spend);
+      return total + parseFloat(element.insights?.data[0]?.spend);
     }
     return total;
   }, 0);

@@ -209,9 +209,11 @@ export default function AdSetsTable() {
           row.insights.data[0].actions
         ? (
             row.insights.data[0].actions.find(
-              (element) => element.action_type === 'like'
+              (element) =>
+                element.action_type ===
+                'onsite_conversion.messaging_conversation_started_7d'
             ) || {}
-          ).value + ' Likes'
+          ).value + ' Msgs'
         : (row.objective === 'OUTCOME_LEADS' ||
             row.objective === 'LEAD_GENERATION') &&
           row.insights &&
@@ -253,7 +255,9 @@ export default function AdSetsTable() {
             row.insights.data[0].actions
           ? (
               row.insights.data[0].actions.find(
-                (element) => element.action_type === 'like'
+                (element) =>
+                  element.action_type ===
+                  'onsite_conversion.messaging_conversation_started_7d'
               ) || {}
             ).value
           : (row.objective === 'OUTCOME_LEADS' ||
@@ -308,8 +312,6 @@ export default function AdSetsTable() {
     <div>
       <AdSetsCards />
       <div className="Table">
-        <h3>Ad Sets Insights</h3>
-
         <DateDropdown
           since={since}
           setSince={setSince}
@@ -320,7 +322,7 @@ export default function AdSetsTable() {
           setSelectedAccount={setSelectedAccount}
         />
 
-        <div style={{ height: 350, width: '100%', marginTop: 30 }}>
+        <div style={{ height: 380, width: '100%' }}>
           <DataGrid
             rows={[...rows, footerRow]}
             columns={columns}

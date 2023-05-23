@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Sidebar.css';
 import gimLogo from '../../images/gim-logo.png';
 import { FiLogIn } from 'react-icons/fi';
@@ -9,8 +9,20 @@ import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   const [selected, setSelected] = useState(0);
-
   const [expanded, setExpaned] = useState(true);
+
+  // Load the selected state from localStorage on component mount
+  useEffect(() => {
+    const storedSelected = localStorage.getItem('selected');
+    if (storedSelected) {
+      setSelected(parseInt(storedSelected, 10));
+    }
+  }, []);
+
+  // Save the selected state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('selected', selected.toString());
+  }, [selected]);
 
   const sidebarVariants = {
     true: {

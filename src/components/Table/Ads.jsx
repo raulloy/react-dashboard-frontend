@@ -179,9 +179,11 @@ export default function AdsTable() {
           row.insights.data[0].actions
         ? (
             row.insights.data[0].actions.find(
-              (element) => element.action_type === 'like'
+              (element) =>
+                element.action_type ===
+                'onsite_conversion.messaging_conversation_started_7d'
             ) || {}
-          ).value + ' Likes'
+          ).value + ' Msgs'
         : (row.campaign.objective === 'OUTCOME_LEADS' ||
             row.campaign.objective === 'LEAD_GENERATION') &&
           row.insights &&
@@ -223,7 +225,9 @@ export default function AdsTable() {
             row.insights.data[0].actions
           ? (
               row.insights.data[0].actions.find(
-                (element) => element.action_type === 'like'
+                (element) =>
+                  element.action_type ===
+                  'onsite_conversion.messaging_conversation_started_7d'
               ) || {}
             ).value
           : (row.campaign.objective === 'OUTCOME_LEADS' ||
@@ -278,8 +282,6 @@ export default function AdsTable() {
     <div>
       <AdsCards />
       <div className="Table">
-        <h3>Ad Sets Insights</h3>
-
         <DateDropdown
           since={since}
           setSince={setSince}
@@ -290,7 +292,7 @@ export default function AdsTable() {
           setSelectedAccount={setSelectedAccount}
         />
 
-        <div style={{ height: 350, width: '100%', marginTop: 30 }}>
+        <div style={{ height: 380, width: '100%' }}>
           <DataGrid
             rows={[...rows, footerRow]}
             columns={columns}

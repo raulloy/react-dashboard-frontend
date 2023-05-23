@@ -174,9 +174,11 @@ export default function CampaignsTable() {
           row.insights.data[0].actions
         ? (
             row.insights.data[0].actions.find(
-              (element) => element.action_type === 'like'
+              (element) =>
+                element.action_type ===
+                'onsite_conversion.messaging_conversation_started_7d'
             ) || {}
-          ).value + ' Likes'
+          ).value + ' Msgs'
         : (row.objective === 'OUTCOME_LEADS' ||
             row.objective === 'LEAD_GENERATION') &&
           row.insights &&
@@ -218,7 +220,9 @@ export default function CampaignsTable() {
             row.insights.data[0].actions
           ? (
               row.insights.data[0].actions.find(
-                (element) => element.action_type === 'like'
+                (element) =>
+                  element.action_type ===
+                  'onsite_conversion.messaging_conversation_started_7d'
               ) || {}
             ).value
           : (row.objective === 'OUTCOME_LEADS' ||
@@ -275,8 +279,6 @@ export default function CampaignsTable() {
       <CampaignCards />
 
       <div className="Table">
-        <h3>Campaign Insights</h3>
-
         <DateDropdown
           since={since}
           setSince={setSince}
@@ -287,7 +289,7 @@ export default function CampaignsTable() {
           setSelectedAccount={setSelectedAccount}
         />
 
-        <div style={{ height: 350, width: '100%', overflow: 'auto' }}>
+        <div style={{ height: 380, width: '100%', overflow: 'auto' }}>
           <DataGrid
             rows={[...rows, footerRow]}
             columns={columns}

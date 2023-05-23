@@ -39,8 +39,6 @@ export default function AccountsTable() {
       <Cards />
 
       <div className="Table">
-        <h3>Account Insights</h3>
-
         <DateRangeInput
           since={since}
           setSince={setSince}
