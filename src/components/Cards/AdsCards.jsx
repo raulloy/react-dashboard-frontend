@@ -11,7 +11,7 @@ const AdsCards = () => {
   const campaignsData = campaignInsights
     .map((element) => element.adsets.data)
     .flat()
-    .filter((element) => element.ads.data[0]?.insights?.data[0]?.spend > 0);
+    .filter((element) => element.ads?.data[0]?.insights?.data[0]?.spend > 0);
   // console.log(campaignsData.map((element) => element.adsets.data).flat());
 
   // Calculate Grand Total Spend
@@ -43,12 +43,13 @@ const AdsCards = () => {
     .map((element) => element.ads.data)
     .flat()
     .map((element) => {
-      const leadAction = element.insights?.data[0]?.actions.find(
+      const insightsData = element.insights?.data[0];
+      const leadAction = insightsData?.actions?.find(
         (element) => element.action_type === 'lead'
       );
 
       if (leadAction) {
-        const spend = parseFloat(element.insights?.data[0]?.spend || 0);
+        const spend = parseFloat(insightsData?.spend || 0);
         const value = parseFloat(leadAction.value);
         return spend / value;
       }
@@ -83,7 +84,7 @@ const AdsCards = () => {
         parseFloat(element.insights?.data[0]?.spend || 0) /
         parseFloat(
           (
-            element.insights?.data[0]?.actions.find(
+            element.insights?.data[0]?.actions?.find(
               (element) => element.action_type === 'lead'
             ) || {}
           ).value

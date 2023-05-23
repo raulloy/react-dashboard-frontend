@@ -41,7 +41,7 @@ const AdSetsCards = () => {
     .map((element) => element.adsets.data)
     .flat()
     .map((element) => {
-      const leadAction = element.insights?.data[0]?.actions.find(
+      const leadAction = element.insights?.data[0]?.actions?.find(
         (element) => element.action_type === 'lead'
       );
 
@@ -81,7 +81,7 @@ const AdSetsCards = () => {
         parseFloat(element.insights?.data[0]?.spend || 0) /
         parseFloat(
           (
-            element.insights?.data[0]?.actions.find(
+            element.insights?.data[0]?.actions?.find(
               (element) => element.action_type === 'lead'
             ) || {}
           ).value

@@ -10,11 +10,13 @@
   .MainDash {
     justify-content: flex-start;
     margin-top: 2rem;
+    overflow: visible;
   }
 }
 
 @media screen and (max-width: 768px) {
   .MainDash {
     align-items: center;
+    overflow: visible;
   }
 }

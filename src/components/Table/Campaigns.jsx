@@ -287,7 +287,7 @@ export default function CampaignsTable() {
           setSelectedAccount={setSelectedAccount}
         />
 
-        <div style={{ height: 350, width: '100%', marginTop: 30 }}>
+        <div style={{ height: 350, width: '100%', overflow: 'auto' }}>
           <DataGrid
             rows={[...rows, footerRow]}
             columns={columns}
