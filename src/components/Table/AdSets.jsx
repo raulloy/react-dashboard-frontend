@@ -9,6 +9,7 @@ import './Table.css';
 import { Link } from 'react-router-dom';
 import AdSetsCards from '../Cards/AdSetsCards';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { saveAs } from 'file-saver';
 
 export default function AdSetsTable() {
   const {
@@ -125,6 +126,46 @@ export default function AdSetsTable() {
     } else {
       console.log('No matching contact found.');
     }
+  };
+
+  const generateCSV = () => {
+    const headers = [
+      'Desarrollo',
+      'Canal de captación',
+      'Subcanal de captación',
+      'Fecha de asignación',
+      'Correo',
+      'Fecha de creación',
+      'Facilitador',
+      'Fuente original',
+      'Etapa del ciclo de vida',
+      'Estado del lead',
+    ];
+
+    const csvContent = [
+      headers.join(','),
+      ...contactsInfo.map((contact) =>
+        [
+          contact.properties.desarrollo,
+          contact.properties.canal_de_captacion,
+          contact.properties.sub_canal_de_captacion,
+          new Date(
+            contact.properties.hubspot_owner_assigneddate
+          ).toLocaleDateString('es-MX'),
+          contact.properties.email,
+          new Date(contact.properties.createdate).toLocaleDateString('es-MX'),
+          contact.properties.facilitador_compra_contacto,
+          contact.properties.hs_analytics_source,
+          contact.properties.lifecyclestage,
+          contact.properties.hs_lead_status,
+        ].join(',')
+      ),
+    ].join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], {
+      type: 'text/csv;charset=utf-8;',
+    });
+    saveAs(blob, 'contacts.csv');
   };
 
   const columns = [
@@ -331,7 +372,7 @@ export default function AdSetsTable() {
           />
         </div>
 
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={handleClose} className="fullscreen-modal">
           <Modal.Header closeButton>
             <Modal.Title>Asignaciones</Modal.Title>
           </Modal.Header>
@@ -383,69 +424,12 @@ export default function AdSetsTable() {
             <Button variant="secondary" onClick={handleClose}>
               Cerrar
             </Button>
+            <Button variant="primary" onClick={generateCSV}>
+              Descargar CSV
+            </Button>
           </Modal.Footer>
         </Modal>
       </div>
     </div>
   );
 }
-
-// const campaignInsights = [
-//   {
-//     name: 'Lomas de la Plata-Oro/IGStoriesCon/Leads/26-04-2023',
-//     account_id: '930432200705578',
-//     campaign_id: '23854211679280359',
-//     campaign: {
-//       name: 'Lomas de la Plata-Oro/IGStoriesCam/Leads/26-04-2023',
-//       id: '23854211679280359',
-//     },
-//     status: 'ACTIVE',
-//     id: '23854211679290359',
-//   },
-//   {
-//     name: 'Lomas de la Plata-General/FbCon/Leads/20-04-23',
-//     account_id: '930432200705578',
-//     campaign_id: '23854126524780359',
-//     campaign: {
-//       name: 'Lomas de la Plata-General/FbCam/Leads/20-04-23',
-//       id: '23854126524780359',
-//     },
-//     status: 'ACTIVE',
-//     insights: {
-//       data: [
-//         {
-//           reach: '53509',
-//           clicks: '534',
-//           impressions: '76121',
-//           spend: '2241.12',
-//           cpc: '4.196854',
-//           ctr: '0.701515',
-//         },
-//       ],
-//     },
-//     id: '23854126525510359',
-//   },
-//   {
-//     name: 'Lomas de la Plata- Platino/FBCon/Leads/RMK/01-03-23',
-//     account_id: '930432200705578',
-//     campaign_id: '23854112376210359',
-//     campaign: {
-//       name: 'Lomas de la Plata- Platino/FBCam/Leads/RMK/01-03-23',
-//       id: '23854112376210359',
-//     },
-//     status: 'ACTIVE',
-//     insights: {
-//       data: [
-//         {
-//           reach: '15200',
-//           clicks: '412',
-//           impressions: '19839',
-//           spend: '2289.83',
-//           cpc: '5.55784',
-//           ctr: '2.076718',
-//         },
-//       ],
-//     },
-//     id: '23854112398650359',
-//   },
-// ];

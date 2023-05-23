@@ -5,24 +5,11 @@ import { FiLogIn } from 'react-icons/fi';
 import { SidebarData } from '../../data/data';
 import { FaBars } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
-  const [selected, setSelected] = useState(0);
+  const location = useLocation();
   const [expanded, setExpaned] = useState(true);
-
-  // Load the selected state from localStorage on component mount
-  useEffect(() => {
-    const storedSelected = localStorage.getItem('selected');
-    if (storedSelected) {
-      setSelected(parseInt(storedSelected, 10));
-    }
-  }, []);
-
-  // Save the selected state to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('selected', selected.toString());
-  }, [selected]);
 
   const sidebarVariants = {
     true: {
@@ -33,7 +20,29 @@ const Sidebar = () => {
     },
   };
 
-  // console.log(window.innerWidth);
+  useEffect(() => {
+    // Handler to update the expanded state
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setExpaned(false);
+      } else {
+        setExpaned(true);
+      }
+    };
+
+    // Add event listener for window resize
+    window.addEventListener('resize', handleResize);
+
+    // Collapse the sidebar on initial load if the window width is less than or equal to 768px
+    if (window.innerWidth <= 768) {
+      setExpaned(false);
+    }
+
+    // Cleanup function to remove the event listener
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <>
@@ -56,16 +65,12 @@ const Sidebar = () => {
 
         <div className="menu">
           {SidebarData.map((item, index) => {
+            const isActive = item.path === location.pathname;
             return (
               <Link
                 to={item.path}
-                className={
-                  selected === index && item.heading !== 'Logout'
-                    ? 'menuItem active'
-                    : 'menuItem'
-                }
+                className={isActive ? 'menuItem active' : 'menuItem'}
                 key={index}
-                onClick={() => setSelected(index)}
               >
                 <item.icon />
                 <span>{item.heading}</span>

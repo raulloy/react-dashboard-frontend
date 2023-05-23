@@ -7,6 +7,7 @@ import { AdsDataStoreContext } from '../../data/AdsDataStore';
 import { statusStyle } from './utils';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AdsCards from '../Cards/AdsCards';
+import { saveAs } from 'file-saver';
 import './Table.css';
 
 export default function AdsTable() {
@@ -69,7 +70,6 @@ export default function AdsTable() {
         return 0;
       }
     });
-  console.log(adsData);
 
   const contactsbyCampaign = contacts.map(({ id, properties }) => ({
     id,
@@ -111,6 +111,46 @@ export default function AdsTable() {
     } else {
       console.log('No matching contact found.');
     }
+  };
+
+  const generateCSV = () => {
+    const headers = [
+      'Desarrollo',
+      'Canal de captación',
+      'Subcanal de captación',
+      'Fecha de asignación',
+      'Correo',
+      'Fecha de creación',
+      'Facilitador',
+      'Fuente original',
+      'Etapa del ciclo de vida',
+      'Estado del lead',
+    ];
+
+    const csvContent = [
+      headers.join(','),
+      ...contactsInfo.map((contact) =>
+        [
+          contact.properties.desarrollo,
+          contact.properties.canal_de_captacion,
+          contact.properties.sub_canal_de_captacion,
+          new Date(
+            contact.properties.hubspot_owner_assigneddate
+          ).toLocaleDateString('es-MX'),
+          contact.properties.email,
+          new Date(contact.properties.createdate).toLocaleDateString('es-MX'),
+          contact.properties.facilitador_compra_contacto,
+          contact.properties.hs_analytics_source,
+          contact.properties.lifecyclestage,
+          contact.properties.hs_lead_status,
+        ].join(',')
+      ),
+    ].join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], {
+      type: 'text/csv;charset=utf-8;',
+    });
+    saveAs(blob, 'contacts.csv');
   };
 
   const columns = [
@@ -301,7 +341,7 @@ export default function AdsTable() {
           />
         </div>
 
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={handleClose} className="fullscreen-modal">
           <Modal.Header closeButton>
             <Modal.Title>Asignaciones</Modal.Title>
           </Modal.Header>
@@ -352,6 +392,9 @@ export default function AdsTable() {
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Cerrar
+            </Button>
+            <Button variant="primary" onClick={generateCSV}>
+              Descargar CSV
             </Button>
           </Modal.Footer>
         </Modal>
