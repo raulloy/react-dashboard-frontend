@@ -39,6 +39,10 @@
   margin-top: 10px;
 }
 
+.header-bold {
+  font-weight: bold;
+}
+
 .Table td,
 th {
   border: none !important;
@@ -55,6 +59,16 @@ th {
 
 .Details {
   color: #00b5ff !important;
+}
+
+.fullscreen-modal .modal-dialog {
+  max-width: 90%;
+  width: 90%;
+  margin: auto;
+}
+
+.fullscreen-modal .modal-content {
+  border-radius: 0;
 }
 
 .popup-table td {

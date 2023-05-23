@@ -23,6 +23,8 @@ export default function AdsTable() {
   const { adset_id } = params;
 
   const adSetsInsights = campaignInsights
+    .map((element) => element.adsets.data)
+    .flat()
     .filter((element) => element.ads.data[0].adset_id === adset_id)
     .map((element) => element.ads && element.ads.data)
     .flat();
@@ -35,6 +37,8 @@ export default function AdsTable() {
   }, 0);
 
   const adsData = campaignInsights
+    .map((element) => element.adsets.data)
+    .flat()
     .map((element) => (element.ads ? element.ads.data : []))
     .flat()
     .filter((element) => element.adset_id === adset_id)

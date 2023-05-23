@@ -1,18 +1,12 @@
 import * as React from 'react';
 import { useState, useContext } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { TableFooter } from '@mui/material';
-import Paper from '@mui/material/Paper';
 import { accounts } from '../../data/data';
 import { DateDropdown } from '../DatePickers/DateDropdown';
 import { AdsDataStoreContext } from '../../data/AdsDataStore';
 import { statusStyle } from './utils';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import AdsCards from '../Cards/AdsCards';
 import './Table.css';
 
 export default function AdsTable() {
@@ -27,10 +21,21 @@ export default function AdsTable() {
     contacts,
   } = useContext(AdsDataStoreContext);
 
+  // console.log(
+  //   campaignInsights
+  //     .map((element) => element.adsets)
+  //     .map((element) => element.data)
+  //     .flat()
+  // );
+
   const adSetsInsights = campaignInsights
+    .map((element) => element.adsets)
+    .map((element) => element.data)
+    .flat()
     .map((element) => element.ads && element.ads.data)
     .filter(Boolean)
     .flat();
+  // console.log(adSetsInsights);
 
   const grandTotalSpend = adSetsInsights.reduce((total, element) => {
     if (element.insights) {
@@ -40,6 +45,9 @@ export default function AdsTable() {
   }, 0);
 
   const adsData = campaignInsights
+    .map((element) => element.adsets)
+    .map((element) => element.data)
+    .flat()
     .map((element) => (element.ads ? element.ads.data : []))
     .flat()
     .sort((a, b) => {
@@ -61,6 +69,7 @@ export default function AdsTable() {
         return 0;
       }
     });
+  console.log(adsData);
 
   const contactsbyCampaign = contacts.map(({ id, properties }) => ({
     id,
@@ -104,168 +113,247 @@ export default function AdsTable() {
     }
   };
 
+  const columns = [
+    { field: 'adset', headerName: 'Conjunto de anuncios', width: 400 },
+    { field: 'ad', headerName: 'Anuncio', width: 400 },
+    { field: 'objective', headerName: 'Objetivo', width: 200 },
+    { field: 'spent', headerName: 'Gastado', width: 200 },
+    { field: 'results', headerName: 'Resultados', width: 200 },
+    { field: 'costByResults', headerName: 'Costo/Resultado', width: 200 },
+    {
+      field: 'status',
+      headerName: 'Estado',
+      width: 100,
+      renderCell: (params) => (
+        <span className="status" style={statusStyle(params.row.status)}>
+          {params.row.status}
+        </span>
+      ),
+    },
+    {
+      field: 'assignments',
+      headerName: 'Asignaciones',
+      width: 200,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => (
+        <Button
+          variant="link"
+          className="Details"
+          onClick={() => handleShow(params.row.id)}
+        >
+          {contactCountsByCampaign[params.row.id] || 0}
+        </Button>
+      ),
+    },
+    { field: 'reach', headerName: 'Alcance', width: 100 },
+    { field: 'impressions', headerName: 'Impresiones', width: 100 },
+    { field: 'clicks', headerName: 'Clics', width: 100 },
+    { field: 'cpc', headerName: 'CPC', width: 100 },
+    { field: 'ctr', headerName: 'CTR', width: 100 },
+  ];
+
+  const rows = adsData.map((row) => ({
+    id: row.id,
+    adset: row.adset.name,
+    ad: row.name,
+    objective: row.campaign.objective,
+    spent: `$${parseFloat(
+      row.insights ? row.insights.data[0].spend : 0
+    ).toLocaleString('en-US')}`,
+    results:
+      row.campaign.objective === 'MESSAGES' &&
+      row.insights &&
+      row.insights.data &&
+      row.insights.data[0].actions
+        ? (
+            row.insights.data[0].actions.find(
+              (element) =>
+                element.action_type ===
+                'onsite_conversion.messaging_conversation_started_7d'
+            ) || {}
+          ).value + ' Msgs'
+        : row.campaign.objective === 'OUTCOME_ENGAGEMENT' &&
+          row.insights &&
+          row.insights.data &&
+          row.insights.data[0].actions
+        ? (
+            row.insights.data[0].actions.find(
+              (element) => element.action_type === 'like'
+            ) || {}
+          ).value + ' Likes'
+        : (row.campaign.objective === 'OUTCOME_LEADS' ||
+            row.campaign.objective === 'LEAD_GENERATION') &&
+          row.insights &&
+          row.insights.data &&
+          row.insights.data[0].actions
+        ? (
+            row.insights.data[0].actions.find(
+              (element) => element.action_type === 'lead'
+            ) || {}
+          ).value + ' Leads'
+        : (row.campaign.objective === 'LINK_CLICKS' ||
+            row.campaign.objective === 'OUTCOME_TRAFFIC') &&
+          row.insights &&
+          row.insights.data &&
+          row.insights.data[0].actions
+        ? (
+            row.insights.data[0].actions.find(
+              (element) => element.action_type === 'link_click'
+            ) || {}
+          ).value + ' Clicks'
+        : 0,
+    costByResults: `$${(
+      (row.insights ? row.insights.data[0].spend : 0) /
+      parseFloat(
+        row.campaign.objective === 'MESSAGES' &&
+          row.insights &&
+          row.insights.data &&
+          row.insights.data[0].actions
+          ? (
+              row.insights.data[0].actions.find(
+                (element) =>
+                  element.action_type ===
+                  'onsite_conversion.messaging_conversation_started_7d'
+              ) || {}
+            ).value
+          : row.campaign.objective === 'OUTCOME_ENGAGEMENT' &&
+            row.insights &&
+            row.insights.data &&
+            row.insights.data[0].actions
+          ? (
+              row.insights.data[0].actions.find(
+                (element) => element.action_type === 'like'
+              ) || {}
+            ).value
+          : (row.campaign.objective === 'OUTCOME_LEADS' ||
+              row.campaign.objective === 'LEAD_GENERATION') &&
+            row.insights &&
+            row.insights.data &&
+            row.insights.data[0].actions
+          ? (
+              row.insights.data[0].actions.find(
+                (element) => element.action_type === 'lead'
+              ) || {}
+            ).value
+          : (row.campaign.objective === 'LINK_CLICKS' ||
+              row.campaign.objective === 'OUTCOME_TRAFFIC') &&
+            row.insights &&
+            row.insights.data &&
+            row.insights.data[0].actions
+          ? (
+              row.insights.data[0].actions.find(
+                (element) => element.action_type === 'link_click'
+              ) || {}
+            ).value
+          : 1
+      )
+    ).toFixed(2)}`,
+    status: row.status,
+    assignments: [contactCountsByCampaign].reduce(
+      (acc, obj) => (row.id in obj ? obj[row.id] : acc),
+      0
+    ),
+    reach: parseInt(
+      row.insights ? row.insights.data[0].reach : 0
+    ).toLocaleString('en-US'),
+    impressions: parseInt(
+      row.insights ? row.insights.data[0].impressions : 0
+    ).toLocaleString('en-US'),
+    clicks: parseInt(
+      row.insights ? row.insights.data[0].clicks : 0
+    ).toLocaleString('en-US'),
+    cpc: parseFloat(row.insights ? row.insights.data[0].cpc : 0).toFixed(2),
+    ctr: parseFloat(row.insights ? row.insights.data[0].ctr : 0).toFixed(2),
+  }));
+
+  const footerRow = {
+    id: 'grand-total',
+    campaign: 'Grand Total',
+    objective: '',
+    spent: `$${grandTotalSpend.toLocaleString('en-US')}`,
+  };
+
   return (
-    <div className="Table">
-      <h3>Ad Sets Insights</h3>
+    <div>
+      <AdsCards />
+      <div className="Table">
+        <h3>Ad Sets Insights</h3>
 
-      <DateDropdown
-        since={since}
-        setSince={setSince}
-        until={until}
-        setUntil={setUntil}
-        accounts={accounts}
-        selectedAccount={selectedAccount}
-        setSelectedAccount={setSelectedAccount}
-      />
+        <DateDropdown
+          since={since}
+          setSince={setSince}
+          until={until}
+          setUntil={setUntil}
+          accounts={accounts}
+          selectedAccount={selectedAccount}
+          setSelectedAccount={setSelectedAccount}
+        />
 
-      <TableContainer
-        component={Paper}
-        style={{
-          boxShadow: '0px 13px 20px 0px #80808029',
-          overflow: 'auto',
-          backgroundColor: 'transparent',
-        }}
-        sx={{ maxHeight: 350 }}
-      >
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">Conjunto de anuncios</TableCell>
-              <TableCell align="left">Anuncio</TableCell>
-              <TableCell align="left">Gastado</TableCell>
-              <TableCell align="left">Estado</TableCell>
-              <TableCell align="left">Asignaciones</TableCell>
-              <TableCell align="left">Alcance</TableCell>
-              <TableCell align="left">Impresiones</TableCell>
-              <TableCell align="left">Clics</TableCell>
-              <TableCell align="left">CPC</TableCell>
-              <TableCell align="left">CTR</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody style={{ color: 'white' }}>
-            {adsData.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.adset?.name}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {row?.name}
-                </TableCell>
-                <TableCell align="center">
-                  ${row.insights ? row.insights.data[0].spend : 0}
-                </TableCell>
-                <TableCell align="left">
-                  <span className="status" style={statusStyle(row.status)}>
-                    {row.status}
-                  </span>
-                </TableCell>
-                <TableCell align="center" className="Details">
-                  <Button variant="link" onClick={() => handleShow(row.id)}>
-                    {[contactCountsByCampaign].reduce(
-                      (acc, obj) => (row.id in obj ? obj[row.id] : acc),
-                      0
-                    )}
-                  </Button>
-                </TableCell>
-                <TableCell align="center">
-                  {parseInt(
-                    row.insights ? row.insights.data[0].reach : 0
-                  ).toLocaleString('en-US')}
-                </TableCell>
-                <TableCell align="center">
-                  {parseInt(
-                    row.insights ? row.insights.data[0].impressions : 0
-                  ).toLocaleString('en-US')}
-                </TableCell>
-                <TableCell align="center">
-                  {parseInt(
-                    row.insights ? row.insights.data[0].clicks : 0
-                  ).toLocaleString('en-US')}
-                </TableCell>
-                <TableCell align="center">
-                  {parseFloat(
-                    row.insights ? row.insights.data[0].cpc : 0
-                  ).toFixed(2)}
-                </TableCell>
-                <TableCell align="center">
-                  {parseFloat(
-                    row.insights ? row.insights.data[0].ctr : 0
-                  ).toFixed(2)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell align="left" style={{ fontWeight: 'bold' }}>
-                Grand Total
-              </TableCell>
-              <TableCell align="center"></TableCell>
-              <TableCell align="center" style={{ fontWeight: 'bold' }}>
-                ${grandTotalSpend.toLocaleString('en-US')}
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+        <div style={{ height: 350, width: '100%', marginTop: 30 }}>
+          <DataGrid
+            rows={[...rows, footerRow]}
+            columns={columns}
+            checkboxSelection
+            components={{ Toolbar: GridToolbar }}
+          />
+        </div>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Asignaciones</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div style={{ overflowX: 'auto' }}>
-            <table className="popup-table">
-              <thead>
-                <tr>
-                  <th>Desarrollo</th>
-                  <th>Canal de captación</th>
-                  <th>Subcanal de captación</th>
-                  <th>Fecha de asignación</th>
-                  <th>Correo</th>
-                  <th>Fecha de creación</th>
-                  <th>Facilitador</th>
-                  <th>Fuente original</th>
-                  <th>Etapa del ciclo de vida</th>
-                  <th>Estado del lead</th>
-                </tr>
-              </thead>
-              <tbody>
-                {contactsInfo.map((contact) => (
-                  <tr key={contact.id}>
-                    <td>{contact.properties.desarrollo}</td>
-                    <td>{contact.properties.canal_de_captacion}</td>
-                    <td>{contact.properties.sub_canal_de_captacion}</td>
-                    <td>
-                      {new Date(
-                        contact.properties.hubspot_owner_assigneddate
-                      ).toLocaleDateString('es-MX')}
-                    </td>
-                    <td>{contact.properties.email}</td>
-                    <td>
-                      {new Date(
-                        contact.properties.createdate
-                      ).toLocaleDateString('es-MX')}
-                    </td>
-                    <td>{contact.properties.facilitador_compra_contacto}</td>
-                    <td>{contact.properties.hs_analytics_source}</td>
-                    <td>{contact.properties.lifecyclestage}</td>
-                    <td>{contact.properties.hs_lead_status}</td>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Asignaciones</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="popup-table">
+                <thead>
+                  <tr>
+                    <th>Desarrollo</th>
+                    <th>Canal de captación</th>
+                    <th>Subcanal de captación</th>
+                    <th>Fecha de asignación</th>
+                    <th>Correo</th>
+                    <th>Fecha de creación</th>
+                    <th>Facilitador</th>
+                    <th>Fuente original</th>
+                    <th>Etapa del ciclo de vida</th>
+                    <th>Estado del lead</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+                </thead>
+                <tbody>
+                  {contactsInfo.map((contact) => (
+                    <tr key={contact.id}>
+                      <td>{contact.properties.desarrollo}</td>
+                      <td>{contact.properties.canal_de_captacion}</td>
+                      <td>{contact.properties.sub_canal_de_captacion}</td>
+                      <td>
+                        {new Date(
+                          contact.properties.hubspot_owner_assigneddate
+                        ).toLocaleDateString('es-MX')}
+                      </td>
+                      <td>{contact.properties.email}</td>
+                      <td>
+                        {new Date(
+                          contact.properties.createdate
+                        ).toLocaleDateString('es-MX')}
+                      </td>
+                      <td>{contact.properties.facilitador_compra_contacto}</td>
+                      <td>{contact.properties.hs_analytics_source}</td>
+                      <td>{contact.properties.lifecyclestage}</td>
+                      <td>{contact.properties.hs_lead_status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Cerrar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
     </div>
   );
 }
