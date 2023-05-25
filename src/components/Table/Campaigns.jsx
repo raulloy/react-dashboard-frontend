@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import CampaignCards from '../Cards/CampaingCards';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { saveAs } from 'file-saver';
+import { facilitadores } from '../../facilitadores';
 
 import './Table.css';
 
@@ -32,19 +33,6 @@ export default function CampaignsTable() {
       return total;
     }, 0);
   }, [campaignInsights]);
-
-  const sortedCampaigns = campaignInsights.sort((a, b) => {
-    // Compare the "spend" properties of the two objects
-    const aSpend = parseFloat(a.insights ? a.insights.data[0].spend : 0);
-    const bSpend = parseFloat(b.insights ? b.insights.data[0].spend : 0);
-    if (aSpend > 0 && bSpend <= 0) {
-      return -1; // a comes first
-    } else if (aSpend <= 0 && bSpend > 0) {
-      return 1; // b comes first
-    }
-
-    return 0; // No changes to order
-  });
 
   const contactsbyCampaign = contacts.map(({ id, properties }) => ({
     id,
@@ -191,7 +179,7 @@ export default function CampaignsTable() {
     { field: 'ctr', headerName: 'CTR', width: 100 },
   ];
 
-  const rows = sortedCampaigns.map((row) => ({
+  const rows = campaignInsights.map((row) => ({
     id: row.id,
     campaign: row.name,
     objective: row.objective,
@@ -380,7 +368,15 @@ export default function CampaignsTable() {
                           contact.properties.createdate
                         ).toLocaleDateString('es-MX')}
                       </td>
-                      <td>{contact.properties.facilitador_compra_contacto}</td>
+                      <td>
+                        {facilitadores.find(
+                          (element) =>
+                            element?.ID ===
+                            parseInt(
+                              contact.properties.facilitador_compra_contacto
+                            )
+                        )?.Nombre || ''}
+                      </td>
                       <td>{contact.properties.hs_analytics_source}</td>
                       <td>{contact.properties.lifecyclestage}</td>
                       <td>{contact.properties.hs_lead_status}</td>

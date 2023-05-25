@@ -8,6 +8,7 @@ import { statusStyle } from './utils';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AdsCards from '../Cards/AdsCards';
 import { saveAs } from 'file-saver';
+import { facilitadores } from '../../facilitadores';
 import './Table.css';
 
 export default function AdsTable() {
@@ -31,6 +32,7 @@ export default function AdsTable() {
 
   const adSetsInsights = campaignInsights
     .map((element) => element.adsets)
+    .filter((element) => element !== undefined)
     .map((element) => element.data)
     .flat()
     .map((element) => element.ads && element.ads.data)
@@ -47,29 +49,11 @@ export default function AdsTable() {
 
   const adsData = campaignInsights
     .map((element) => element.adsets)
+    .filter((element) => element !== undefined)
     .map((element) => element.data)
     .flat()
     .map((element) => (element.ads ? element.ads.data : []))
-    .flat()
-    .sort((a, b) => {
-      if (
-        a.insights &&
-        a.insights.data &&
-        a.insights.data[0] &&
-        parseFloat(a.insights.data[0].spend) > 0
-      ) {
-        return -1;
-      } else if (
-        b.insights &&
-        b.insights.data &&
-        b.insights.data[0] &&
-        parseFloat(b.insights.data[0].spend) > 0
-      ) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
+    .flat();
 
   const contactsbyCampaign = contacts.map(({ id, properties }) => ({
     id,
@@ -379,7 +363,15 @@ export default function AdsTable() {
                           contact.properties.createdate
                         ).toLocaleDateString('es-MX')}
                       </td>
-                      <td>{contact.properties.facilitador_compra_contacto}</td>
+                      <td>
+                        {facilitadores.find(
+                          (element) =>
+                            element?.ID ===
+                            parseInt(
+                              contact.properties.facilitador_compra_contacto
+                            )
+                        )?.Nombre || ''}
+                      </td>
                       <td>{contact.properties.hs_analytics_source}</td>
                       <td>{contact.properties.lifecyclestage}</td>
                       <td>{contact.properties.hs_lead_status}</td>

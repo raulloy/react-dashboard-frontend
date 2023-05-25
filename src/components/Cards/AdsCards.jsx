@@ -6,9 +6,9 @@ import './Cards.css';
 
 const AdsCards = () => {
   const { campaignInsights } = useContext(AdsDataStoreContext);
-  console.log(campaignInsights.map((element) => element.adsets.data).flat());
 
   const campaignsData = campaignInsights
+    .filter((element) => element.adsets !== undefined)
     .map((element) => element.adsets.data)
     .flat()
     .filter((element) => element.ads?.data[0]?.insights?.data[0]?.spend > 0);

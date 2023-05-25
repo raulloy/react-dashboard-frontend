@@ -7,9 +7,9 @@ import './Cards.css';
 const AdSetsCards = () => {
   const { campaignInsights } = useContext(AdSetsDataStoreContext);
 
-  const campaignsData = campaignInsights.filter(
-    (element) => element.adsets.data[0]?.insights?.data[0]?.spend > 0
-  );
+  const campaignsData = campaignInsights
+    .filter((element) => element.adsets !== undefined)
+    .filter((element) => element.adsets.data[0]?.insights?.data[0]?.spend > 0);
   // console.log(campaignsData.map((element) => element.adsets.data).flat());
 
   // Calculate Grand Total Spend
