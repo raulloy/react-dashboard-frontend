@@ -37,8 +37,10 @@ export default function GoogleCampaignsTable() {
     fetchData();
   }, [since, until]);
 
-  const googleContacts = contacts.filter((element) =>
-    element.properties.hs_analytics_first_url.includes('ads.google.com')
+  const googleContacts = contacts.filter(
+    (element) =>
+      element.properties.hs_analytics_first_url &&
+      element.properties.hs_analytics_first_url.includes('ads.google.com')
   );
 
   const contactsbyCampaign = googleContacts.map(({ id, properties }) => ({
@@ -81,7 +83,6 @@ export default function GoogleCampaignsTable() {
   };
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 120 },
     { field: 'campaign', headerName: 'Campaña', width: 400 },
     { field: 'campaignType', headerName: 'Tipo de campaña', width: 160 },
     { field: 'spent', headerName: 'Gastado', width: 140 },
