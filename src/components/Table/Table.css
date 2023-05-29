@@ -39,6 +39,12 @@
   margin-top: 10px;
 }
 
+.table-container {
+  height: 380px;
+  width: 100%;
+  overflow: auto;
+}
+
 .header-bold {
   font-weight: bold;
 }
@@ -95,10 +101,25 @@ th {
   box-shadow: -5px 0 10px rgba(0, 0, 0, 0.05) inset !important;
 }
 
+@media screen and (min-width: 1200px) {
+  .table-container {
+    height: 460px;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .table-container {
+    height: 600px;
+  }
+}
+
 @media screen and (max-width: 1200px) {
   .Table {
     width: 170%;
     margin-top: 2rem;
+  }
+  .table-container {
+    height: 640px;
   }
 }
 
@@ -109,5 +130,8 @@ th {
     flex-direction: column;
     align-items: center;
     width: 23rem;
+  }
+  .table-container {
+    height: 640px;
   }
 }

@@ -348,7 +348,7 @@ export default function AdSetsTable() {
           setSelectedAccount={setSelectedAccount}
         />
 
-        <div style={{ height: 380, width: '100%' }}>
+        <div className="table-container">
           <DataGrid
             rows={[...rows, footerRow]}
             columns={columns}

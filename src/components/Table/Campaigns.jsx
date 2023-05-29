@@ -10,7 +10,6 @@ import CampaignCards from '../Cards/CampaingCards';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { saveAs } from 'file-saver';
 import { facilitadores } from '../../facilitadores';
-
 import './Table.css';
 
 export default function CampaignsTable() {
@@ -319,7 +318,7 @@ export default function CampaignsTable() {
           setSelectedAccount={setSelectedAccount}
         />
 
-        <div style={{ height: 380, width: '100%', overflow: 'auto' }}>
+        <div className="table-container">
           <DataGrid
             rows={[...rows, footerRow]}
             columns={columns}

@@ -15,28 +15,33 @@ export const SidebarData = [
   // },
   {
     icon: FaRegBuilding,
-    heading: 'Accounts',
+    heading: 'FB Accounts',
     path: '/accounts',
   },
   {
     icon: FaRegFolder,
-    heading: 'Campaigns',
+    heading: 'FB Campaigns',
     path: '/campaigns',
   },
   {
     icon: MdOutlineSpaceDashboard,
-    heading: 'Ad Sets',
+    heading: 'FB Ad Sets',
     path: '/ad-sets',
   },
   {
     icon: FaRegSquare,
-    heading: 'Ads',
+    heading: 'FB Ads',
     path: '/ads',
   },
   {
     icon: TbReport,
-    heading: 'Reporte General',
+    heading: 'FB Reporte General',
     path: '/general-report',
+  },
+  {
+    icon: FaRegFolder,
+    heading: 'Google Campaigns',
+    path: '/google-campaigns',
   },
   // {
   //   icon: FiLogIn,
