@@ -41,8 +41,6 @@ export default function CampaignsTable() {
     lifecyclestage: properties.lifecyclestage,
   }));
 
-  // console.log(contactsbyCampaign);
-
   const contactCountsByCampaign = contacts.reduce((acc, contact) => {
     const campaignId =
       contact.properties.hs_analytics_first_url?.match(/hsa_cam=(\d+)/)?.[1] ||
@@ -50,8 +48,6 @@ export default function CampaignsTable() {
     acc[campaignId] = (acc[campaignId] || 0) + 1;
     return acc;
   }, {});
-
-  // console.log('contactCountsByCampaign', contactCountsByCampaign);
 
   const [show, setShow] = useState(false);
   const [contactsInfo, setContactsInfo] = useState([]);
