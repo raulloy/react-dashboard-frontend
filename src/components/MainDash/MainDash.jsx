@@ -12,6 +12,7 @@ import { CampaignsDataStore } from '../../data/CampaignsDataStore';
 import { AdSetsDataStore } from '../../data/AdSetsDataStore';
 import { AdsDataStore } from '../../data/AdsDataStore';
 import GoogleCampaignsTable from '../Table/GCampaigns';
+import GoogleAdGroupsTable from '../Table/GAdGroups';
 import './MainDash.css';
 
 // prettier-ignore
@@ -27,7 +28,8 @@ const MainDash = () => {
         <Route path="/ads" element={<AdsDataStore><Ads /></AdsDataStore>}/>
         <Route path="/ads/:adset_id" element={<AdsDataStore><AdsFiltered /></AdsDataStore>}/>
         <Route path="/general-report" element={<CampaignsDataStore><GeneralReport /></CampaignsDataStore>}/>
-        <Route path="/google-campaigns" element={<AccountsDataStore><GoogleCampaignsTable /></AccountsDataStore>}/>
+        <Route path="/google-campaigns" element={<GoogleCampaignsTable />}/>
+        <Route path="/google-ad_groups" element={<GoogleAdGroupsTable />}/>
       </Routes>
     </div>
   );

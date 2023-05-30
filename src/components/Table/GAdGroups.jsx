@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { googleCampaignsData } from '../../data/google';
+import { googleAdGroupsData, googleCampaignsData } from '../../data/google';
 import DateRangeInput from '../DatePickers/DateRangeInput';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { contactsData } from '../../data/hubspot';
@@ -9,7 +9,7 @@ import { facilitadores } from '../../facilitadores';
 import { saveAs } from 'file-saver';
 import './Table.css';
 
-export default function GoogleCampaignsTable() {
+export default function GoogleAdGroupsTable() {
   const [since, setSince] = useState(
     localStorage.getItem('since') || '2023-04-15'
   );
@@ -18,6 +18,7 @@ export default function GoogleCampaignsTable() {
   );
 
   const [googleCampaignInsights, setGoogleCampaignInsights] = useState([]);
+  const [googleAdGroupInsights, setgoogleAdGroupInsights] = useState([]);
   const [contacts, setContacts] = useState([]);
 
   useEffect(() => {
@@ -25,9 +26,11 @@ export default function GoogleCampaignsTable() {
       try {
         // Fetch Campaign Insights
         const campaignsResponse = await googleCampaignsData(since, until);
-        setGoogleCampaignInsights(
-          campaignsResponse.filter((element) => element.metrics.cost_micros > 0)
-        );
+        setGoogleCampaignInsights(campaignsResponse);
+
+        // Fetch AdGroups Insights
+        const adGroupsResponse = await googleAdGroupsData(since, until);
+        setgoogleAdGroupInsights(adGroupsResponse);
 
         // Fetch Contacts
         const contactsResponse = await contactsData(since, until);
@@ -46,14 +49,14 @@ export default function GoogleCampaignsTable() {
   const contactsbyCampaign = googleContacts.map(({ id, properties }) => ({
     id,
     hs_analytics_first_url: properties.hs_analytics_first_url
-      ? properties.hs_analytics_first_url.match(/hsa_cam=(\d+)/)?.[1]
+      ? properties.hs_analytics_first_url.match(/hsa_grp=(\d+)/)?.[1]
       : null,
     lifecyclestage: properties.lifecyclestage,
   }));
 
   const contactCountsByCampaign = googleContacts.reduce((acc, contact) => {
     const campaignId =
-      contact.properties.hs_analytics_first_url?.match(/hsa_cam=(\d+)/)?.[1] ||
+      contact.properties.hs_analytics_first_url?.match(/hsa_grp=(\d+)/)?.[1] ||
       null;
     acc[campaignId] = (acc[campaignId] || 0) + 1;
     return acc;
@@ -124,7 +127,8 @@ export default function GoogleCampaignsTable() {
 
   const columns = [
     { field: 'campaign', headerName: 'Campaña', width: 400 },
-    { field: 'campaignType', headerName: 'Tipo de campaña', width: 160 },
+    { field: 'ad_group', headerName: 'Grupos de anucios', width: 360 },
+    { field: 'ad_groupType', headerName: 'Tipo de grupo', width: 180 },
     { field: 'spent', headerName: 'Gastado', width: 140 },
     {
       field: 'assignments',
@@ -146,32 +150,42 @@ export default function GoogleCampaignsTable() {
     { field: 'clicks', headerName: 'Clics', width: 100 },
     { field: 'cpc', headerName: 'CPC', width: 100 },
     { field: 'ctr', headerName: 'CTR', width: 100 },
-    { field: 'conversions', headerName: 'Conversiones', width: 120 },
+    {
+      field: 'conversions',
+      headerName: 'Conversiones',
+      headerAlign: 'center',
+      align: 'center',
+      width: 120,
+    },
     {
       field: 'cost_per_conversion',
       headerName: 'Costo/conversion',
+      headerAlign: 'center',
+      align: 'center',
       width: 160,
     },
   ];
 
-  const rows = googleCampaignInsights.map((row) => ({
-    id: row.campaign.id,
-    campaign: row.campaign.name,
-    campaignType:
-      row.campaign.advertising_channel_type === 12
-        ? 'Discovery'
-        : row.campaign.advertising_channel_type === 2
-        ? 'Search'
-        : row.campaign.advertising_channel_type === 3
-        ? 'Display'
-        : row.campaign.advertising_channel_type === 6
-        ? 'Video'
-        : row.campaign.advertising_channel_type,
+  const rows = googleAdGroupInsights.map((row) => ({
+    id: row.ad_group.id,
+    campaign: googleCampaignInsights.filter(
+      (item) =>
+        item.campaign.id === parseInt(row.ad_group.campaign.split('/')[3])
+    )[0]?.campaign?.name,
+    ad_group: row.ad_group.name,
+    ad_groupType:
+      row.ad_group.type === 16
+        ? 'Video responsivo'
+        : row.ad_group.type === 2
+        ? 'Estándar'
+        : row.ad_group.type === 3
+        ? 'Red de display'
+        : '',
     spent: `$${(parseFloat(row.metrics.cost_micros) / 1000000).toLocaleString(
       'en-US'
     )}`,
     assignments: [contactCountsByCampaign].reduce(
-      (acc, obj) => (row.campaign.id in obj ? obj[row.campaign.id] : acc),
+      (acc, obj) => (row.ad_group.id in obj ? obj[row.ad_group.id] : acc),
       0
     ),
     impressions: parseInt(row.metrics.impressions).toLocaleString('en-US'),

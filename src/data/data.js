@@ -43,6 +43,11 @@ export const SidebarData = [
     heading: 'Google Campaigns',
     path: '/google-campaigns',
   },
+  {
+    icon: MdOutlineSpaceDashboard,
+    heading: 'Google AdGroups',
+    path: '/google-ad_groups',
+  },
   // {
   //   icon: FiLogIn,
   //   heading: 'Logout',
