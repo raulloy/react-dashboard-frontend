@@ -39,8 +39,10 @@ export default function GoogleCampaignsTable() {
     fetchData();
   }, [since, until]);
 
-  const googleContacts = contacts.filter((element) =>
-    element.properties.hs_analytics_first_url.includes('ads.google.com')
+  const googleContacts = contacts.filter(
+    (element) =>
+      element.properties.hs_analytics_first_url &&
+      element.properties.hs_analytics_first_url.includes('ads.google.com')
   );
 
   const contactsbyCampaign = googleContacts.map(({ id, properties }) => ({
