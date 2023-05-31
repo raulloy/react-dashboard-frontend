@@ -12,14 +12,12 @@ import DateRangeInput from '../DatePickers/DateRangeInput';
 import { AccountsDataStoreContext } from '../../data/AccountsDataStore';
 import Cards from '../Cards/Cards';
 import { saveAs } from 'file-saver';
-import './Table.css';
 import { facilitadores } from '../../facilitadores';
+import './Table.css';
 
 export default function AccountsTable() {
   const { since, setSince, until, setUntil, accountInsights, contacts } =
     useContext(AccountsDataStoreContext);
-
-  console.log(contacts);
 
   const contactsbyCampaign = contacts.map(({ id, properties }) => ({
     id,

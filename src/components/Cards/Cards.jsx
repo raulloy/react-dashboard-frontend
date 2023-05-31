@@ -17,14 +17,16 @@ const Cards = () => {
     accountInsights.reduce((acc, curr) => acc + parseFloat(curr?.cpc), 0) /
     accountInsights.length;
 
-  // Calculate the Average CPL
-  const costPerLeadArray = accountInsights.map(
-    (element) =>
-      element?.spend /
-      parseFloat(
-        element?.actions.find((element) => element.action_type === 'lead').value
-      )
-  );
+  const costPerLeadArray = accountInsights.map((element) => {
+    const leadAction = element?.actions.find(
+      (action) => action.action_type === 'lead'
+    );
+    if (leadAction) {
+      return element?.spend / parseFloat(leadAction.value);
+    } else {
+      return 0; // or any other default value you want to use
+    }
+  });
 
   const totalCostPerLead = costPerLeadArray.reduce(
     (accumulator, currentValue) => accumulator + currentValue
