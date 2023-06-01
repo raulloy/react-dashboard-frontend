@@ -13,3 +13,10 @@ export const googleAdGroupsData = async (since, until) => {
   );
   return response.data;
 };
+
+export const googleAdsData = async (since, until) => {
+  const response = await axios.get(
+    `https://google-ads-api.onrender.com/api/google-ads?since=${since}&until=${until}`
+  );
+  return response.data;
+};

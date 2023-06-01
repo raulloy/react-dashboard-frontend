@@ -113,6 +113,12 @@ th {
   }
 }
 
+@media screen and (min-width: 1300px) {
+  .table-container {
+    height: 480px;
+  }
+}
+
 @media screen and (max-width: 1200px) {
   .Table {
     width: 170%;

@@ -48,6 +48,11 @@ export const SidebarData = [
     heading: 'Google AdGroups',
     path: '/google-ad_groups',
   },
+  {
+    icon: FaRegSquare,
+    heading: 'Google Ads',
+    path: '/google-ads',
+  },
   // {
   //   icon: FiLogIn,
   //   heading: 'Logout',
