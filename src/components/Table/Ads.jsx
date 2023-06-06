@@ -55,7 +55,13 @@ export default function AdsTable() {
     .map((element) => (element.ads ? element.ads.data : []))
     .flat();
 
-  const contactsbyCampaign = contacts.map(({ id, properties }) => ({
+  const fbContacts = contacts.filter(
+    (element) =>
+      element.properties.hs_analytics_first_url &&
+      element.properties.hs_analytics_first_url.includes('facebook.com')
+  );
+
+  const contactsbyCampaign = fbContacts.map(({ id, properties }) => ({
     id,
     hs_analytics_first_url: properties.hs_analytics_first_url
       ? properties.hs_analytics_first_url.match(/hsa_ad=(\d+)/)?.[1]
@@ -84,7 +90,7 @@ export default function AdsTable() {
       (campaign) => campaign.hs_analytics_first_url === campaignID
     );
 
-    const matchingContact = contacts.filter((contact) =>
+    const matchingContact = fbContacts.filter((contact) =>
       matchingCampaign.some((campaign) => campaign.id === contact.id)
     );
 

@@ -240,3 +240,18 @@ export const accounts = [
     id: 'act_265576294404103',
   },
 ];
+
+export const googleAccounts = [
+  {
+    name: 'Hogares Unión Marca Advantage',
+    id: '7462269823',
+  },
+  {
+    name: 'HuLifestyle',
+    id: '5347167145',
+  },
+  {
+    name: 'Residencial Centralpark',
+    id: '9440485190',
+  },
+];

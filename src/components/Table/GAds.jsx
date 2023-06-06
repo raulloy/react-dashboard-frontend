@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { googleAdGroupsData, googleAdsData } from '../../data/google';
-import DateRangeInput from '../DatePickers/DateRangeInput';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { contactsData } from '../../data/hubspot';
 import { Modal, Button } from 'react-bootstrap';
 import { facilitadores } from '../../facilitadores';
 import { saveAs } from 'file-saver';
+import { googleAccounts } from '../../data/data';
+import DateDropdown from '../DatePickers/DateDropdown';
 import './Table.css';
 
 export default function GoogleAdsTable() {
@@ -17,6 +18,9 @@ export default function GoogleAdsTable() {
     localStorage.getItem('until') || '2023-04-30'
   );
 
+  const [googleSelectedAccount, setSelectedGoogleAccount] = useState(
+    localStorage.getItem('googleSelectedAccount') || googleAccounts[0].id
+  );
   const [googleAdGroupInsights, setgoogleAdGroupInsights] = useState([]);
   const [googleAdsInsights, setgoogleAdsInsights] = useState([]);
   const [contacts, setContacts] = useState([]);
@@ -25,11 +29,19 @@ export default function GoogleAdsTable() {
     const fetchData = async () => {
       try {
         // Fetch AdGroups Insights
-        const adGroupsResponse = await googleAdGroupsData(since, until);
+        const adGroupsResponse = await googleAdGroupsData(
+          googleSelectedAccount,
+          since,
+          until
+        );
         setgoogleAdGroupInsights(adGroupsResponse);
 
         // Fetch Ads Insights
-        const adsResponse = await googleAdsData(since, until);
+        const adsResponse = await googleAdsData(
+          googleSelectedAccount,
+          since,
+          until
+        );
         setgoogleAdsInsights(adsResponse);
 
         // Fetch Contacts
@@ -40,7 +52,7 @@ export default function GoogleAdsTable() {
       }
     };
     fetchData();
-  }, [since, until]);
+  }, [since, until, googleSelectedAccount]);
 
   const googleContacts = contacts.filter(
     (element) =>
@@ -215,11 +227,14 @@ export default function GoogleAdsTable() {
   return (
     <div>
       <div className="Table">
-        <DateRangeInput
+        <DateDropdown
           since={since}
           setSince={setSince}
           until={until}
           setUntil={setUntil}
+          accounts={googleAccounts}
+          selectedAccount={googleSelectedAccount}
+          setSelectedAccount={setSelectedGoogleAccount}
         />
 
         <div className="table-container ">

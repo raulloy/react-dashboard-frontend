@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { googleAdGroupsData, googleCampaignsData } from '../../data/google';
-import DateRangeInput from '../DatePickers/DateRangeInput';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { contactsData } from '../../data/hubspot';
 import { Modal, Button } from 'react-bootstrap';
 import { facilitadores } from '../../facilitadores';
 import { saveAs } from 'file-saver';
+import { googleAccounts } from '../../data/data';
+import DateDropdown from '../DatePickers/DateDropdown';
 import './Table.css';
 
 export default function GoogleAdGroupsTable() {
@@ -17,6 +18,9 @@ export default function GoogleAdGroupsTable() {
     localStorage.getItem('until') || '2023-04-30'
   );
 
+  const [googleSelectedAccount, setSelectedGoogleAccount] = useState(
+    localStorage.getItem('googleSelectedAccount') || googleAccounts[0].id
+  );
   const [googleCampaignInsights, setGoogleCampaignInsights] = useState([]);
   const [googleAdGroupInsights, setgoogleAdGroupInsights] = useState([]);
   const [contacts, setContacts] = useState([]);
@@ -25,11 +29,19 @@ export default function GoogleAdGroupsTable() {
     const fetchData = async () => {
       try {
         // Fetch Campaign Insights
-        const campaignsResponse = await googleCampaignsData(since, until);
+        const campaignsResponse = await googleCampaignsData(
+          googleSelectedAccount,
+          since,
+          until
+        );
         setGoogleCampaignInsights(campaignsResponse);
 
         // Fetch AdGroups Insights
-        const adGroupsResponse = await googleAdGroupsData(since, until);
+        const adGroupsResponse = await googleAdGroupsData(
+          googleSelectedAccount,
+          since,
+          until
+        );
         setgoogleAdGroupInsights(adGroupsResponse);
 
         // Fetch Contacts
@@ -40,7 +52,7 @@ export default function GoogleAdGroupsTable() {
       }
     };
     fetchData();
-  }, [since, until]);
+  }, [since, until, googleSelectedAccount]);
 
   const googleContacts = contacts.filter(
     (element) =>
@@ -205,11 +217,14 @@ export default function GoogleAdGroupsTable() {
   return (
     <div>
       <div className="Table">
-        <DateRangeInput
+        <DateDropdown
           since={since}
           setSince={setSince}
           until={until}
           setUntil={setUntil}
+          accounts={googleAccounts}
+          selectedAccount={googleSelectedAccount}
+          setSelectedAccount={setSelectedGoogleAccount}
         />
 
         <div className="table-container ">

@@ -33,7 +33,13 @@ export default function CampaignsTable() {
     }, 0);
   }, [campaignInsights]);
 
-  const contactsbyCampaign = contacts.map(({ id, properties }) => ({
+  const fbContacts = contacts.filter(
+    (element) =>
+      element.properties.hs_analytics_first_url &&
+      element.properties.hs_analytics_first_url.includes('facebook.com')
+  );
+
+  const contactsbyCampaign = fbContacts.map(({ id, properties }) => ({
     id,
     hs_analytics_first_url: properties.hs_analytics_first_url
       ? properties.hs_analytics_first_url.match(/hsa_cam=(\d+)/)?.[1]
@@ -41,7 +47,7 @@ export default function CampaignsTable() {
     lifecyclestage: properties.lifecyclestage,
   }));
 
-  const contactCountsByCampaign = contacts.reduce((acc, contact) => {
+  const contactCountsByCampaign = fbContacts.reduce((acc, contact) => {
     const campaignId =
       contact.properties.hs_analytics_first_url?.match(/hsa_cam=(\d+)/)?.[1] ||
       null;
@@ -58,7 +64,7 @@ export default function CampaignsTable() {
     const matchingCampaign = contactsbyCampaign.filter(
       (campaign) => campaign.hs_analytics_first_url === campaignID
     );
-    const matchingContact = contacts.filter((contact) =>
+    const matchingContact = fbContacts.filter((contact) =>
       matchingCampaign.some(
         (campaign) =>
           campaign.id === contact.id &&
