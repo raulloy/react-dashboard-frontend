@@ -24,10 +24,13 @@ export default function GoogleAdGroupsTable() {
   const [googleCampaignInsights, setGoogleCampaignInsights] = useState([]);
   const [googleAdGroupInsights, setgoogleAdGroupInsights] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
+
         // Fetch Campaign Insights
         const campaignsResponse = await googleCampaignsData(
           googleSelectedAccount,
@@ -47,8 +50,11 @@ export default function GoogleAdGroupsTable() {
         // Fetch Contacts
         const contactsResponse = await contactsData(since, until);
         setContacts(contactsResponse);
+
+        setIsLoading(false);
       } catch (err) {
         console.log(err);
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -228,12 +234,16 @@ export default function GoogleAdGroupsTable() {
         />
 
         <div className="table-container ">
-          <DataGrid
-            rows={[...rows]}
-            columns={columns}
-            checkboxSelection
-            components={{ Toolbar: GridToolbar }}
-          />
+          {isLoading ? (
+            <div>Loading...</div>
+          ) : (
+            <DataGrid
+              rows={[...rows]}
+              columns={columns}
+              checkboxSelection
+              components={{ Toolbar: GridToolbar }}
+            />
+          )}
         </div>
 
         <Modal show={show} onHide={handleClose} className="fullscreen-modal">

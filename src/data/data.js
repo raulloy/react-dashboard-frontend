@@ -2,7 +2,7 @@
 import { FaRegBuilding, FaRegFolder, FaRegSquare } from 'react-icons/fa';
 import { MdOutlineSpaceDashboard } from 'react-icons/md';
 import { TbReport } from 'react-icons/tb';
-// import { FiLogIn } from 'react-icons/fi';
+import { FiLogIn } from 'react-icons/fi';
 
 // Recent Card Imports
 import img1 from '../images/profile.png';
@@ -53,10 +53,11 @@ export const SidebarData = [
     heading: 'Google Ads',
     path: '/google-ads',
   },
-  // {
-  //   icon: FiLogIn,
-  //   heading: 'Logout',
-  // },
+  {
+    icon: FiLogIn,
+    heading: 'Logout',
+    path: '/sign-in',
+  },
 ];
 
 // Analytics Cards Data

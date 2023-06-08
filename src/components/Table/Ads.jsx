@@ -23,13 +23,6 @@ export default function AdsTable() {
     contacts,
   } = useContext(AdsDataStoreContext);
 
-  // console.log(
-  //   campaignInsights
-  //     .map((element) => element.adsets)
-  //     .map((element) => element.data)
-  //     .flat()
-  // );
-
   const adSetsInsights = campaignInsights
     .map((element) => element.adsets)
     .filter((element) => element !== undefined)

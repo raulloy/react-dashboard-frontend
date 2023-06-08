@@ -23,10 +23,15 @@ export default function GoogleCampaignsTable() {
   );
   const [googleCampaignInsights, setGoogleCampaignInsights] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [countdown, setCountdown] = useState(120);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
+        setCountdown(120);
+
         // Fetch Campaign Insights
         const campaignsResponse = await googleCampaignsData(
           googleSelectedAccount,
@@ -38,15 +43,25 @@ export default function GoogleCampaignsTable() {
         // Fetch Contacts
         const contactsResponse = await contactsData(since, until);
         setContacts(contactsResponse);
+
+        setIsLoading(false);
       } catch (err) {
         console.log(err);
+        setIsLoading(false);
       }
     };
+
+    const timer = setInterval(() => {
+      setCountdown((prevCountdown) => prevCountdown - 1);
+    }, 1000);
+
     fetchData();
 
     localStorage.setItem('since', since);
     localStorage.setItem('until', until);
     localStorage.setItem('googleSelectedAccount', googleSelectedAccount);
+
+    return () => clearInterval(timer);
   }, [since, until, googleSelectedAccount]);
 
   const googleContacts = contacts.filter(
@@ -212,12 +227,18 @@ export default function GoogleCampaignsTable() {
         />
 
         <div className="table-container ">
-          <DataGrid
-            rows={[...rows]}
-            columns={columns}
-            checkboxSelection
-            components={{ Toolbar: GridToolbar }}
-          />
+          {isLoading ? (
+            <div>
+              Loading... (getting data, it can take up to {countdown} seconds)
+            </div>
+          ) : (
+            <DataGrid
+              rows={[...rows]}
+              columns={columns}
+              checkboxSelection
+              components={{ Toolbar: GridToolbar }}
+            />
+          )}
         </div>
 
         <Modal show={show} onHide={handleClose} className="fullscreen-modal">
