@@ -70,7 +70,7 @@ const Sidebar = ({ signoutHandler }) => {
                 to={item.path}
                 className={isActive ? 'menuItem active' : 'menuItem'}
                 key={index}
-                onClick={item.path ? signoutHandler : null}
+                onClick={item.path === '/sign-in' ? signoutHandler : null}
               >
                 <item.icon />
                 <span>{item.heading}</span>
