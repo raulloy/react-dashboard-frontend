@@ -28,7 +28,8 @@ export default function SigninScreen() {
 
   return (
     <Container className="small-container">
-      <h1 className="my-3">Sign In</h1>
+      <h1 className="my-3">GIM Dashboard</h1>
+      <h2 className="my-3">Sign In</h2>
       <Form onSubmit={submitHandler}>
         <Form.Group className="mb-3" controlId="email">
           <Form.Label>Email</Form.Label>

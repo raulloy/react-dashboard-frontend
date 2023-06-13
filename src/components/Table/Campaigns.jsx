@@ -336,55 +336,92 @@ export default function CampaignsTable() {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <div style={{ overflowX: 'auto' }}>
-              <table className="popup-table">
-                <thead>
-                  <tr>
-                    <th>Desarrollo</th>
-                    <th>Canal de captación</th>
-                    <th>Subcanal de captación</th>
-                    <th>Fecha de asignación</th>
-                    <th>Correo</th>
-                    <th>Fecha de creación</th>
-                    <th>Facilitador</th>
-                    <th>Fuente original</th>
-                    <th>Etapa del ciclo de vida</th>
-                    <th>Estado del lead</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {contactsInfo.map((contact) => (
-                    <tr key={contact.id}>
-                      <td>{contact.properties.desarrollo}</td>
-                      <td>{contact.properties.canal_de_captacion}</td>
-                      <td>{contact.properties.sub_canal_de_captacion}</td>
-                      <td>
-                        {new Date(
-                          contact.properties.hubspot_owner_assigneddate
-                        ).toLocaleDateString('es-MX')}
-                      </td>
-                      <td>{contact.properties.email}</td>
-                      <td>
-                        {new Date(
-                          contact.properties.createdate
-                        ).toLocaleDateString('es-MX')}
-                      </td>
-                      <td>
-                        {facilitadores.find(
-                          (element) =>
-                            element?.ID ===
-                            parseInt(
-                              contact.properties.facilitador_compra_contacto
-                            )
-                        )?.Nombre || ''}
-                      </td>
-                      <td>{contact.properties.hs_analytics_source}</td>
-                      <td>{contact.properties.lifecyclestage}</td>
-                      <td>{contact.properties.hs_lead_status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="datagrid-container">
+              <DataGrid
+                rows={contactsInfo}
+                columns={[
+                  {
+                    field: 'desarrollo',
+                    headerName: 'Desarrollo',
+                    width: 230,
+                    valueGetter: (params) => params.row.properties.desarrollo,
+                  },
+                  {
+                    field: 'canal_de_captacion',
+                    headerName: 'Canal de captación',
+                    width: 200,
+                    valueGetter: (params) =>
+                      params.row.properties.canal_de_captacion,
+                  },
+                  {
+                    field: 'sub_canal_de_captacion',
+                    headerName: 'Subcanal de captación',
+                    width: 200,
+                    valueGetter: (params) =>
+                      params.row.properties.sub_canal_de_captacion,
+                  },
+                  {
+                    field: 'hubspot_owner_assigneddate',
+                    headerName: 'Fecha de asignación',
+                    width: 200,
+                    valueGetter: (params) =>
+                      new Date(
+                        params.row.properties.hubspot_owner_assigneddate
+                      ).toLocaleDateString('es-MX'),
+                  },
+                  {
+                    field: 'email',
+                    headerName: 'Correo',
+                    width: 240,
+                    valueGetter: (params) => params.row.properties.email,
+                  },
+                  {
+                    field: 'createdate',
+                    headerName: 'Fecha de creación',
+                    width: 180,
+                    valueGetter: (params) =>
+                      new Date(
+                        params.row.properties.createdate
+                      ).toLocaleDateString('es-MX'),
+                  },
+                  {
+                    field: 'facilitador_compra_contacto',
+                    headerName: 'Facilitador',
+                    width: 240,
+                    valueGetter: (params) =>
+                      facilitadores.find(
+                        (element) =>
+                          element?.ID ===
+                          parseInt(
+                            params.row.properties.facilitador_compra_contacto
+                          )
+                      )?.Nombre || '',
+                  },
+                  {
+                    field: 'hs_analytics_source',
+                    headerName: 'Fuente original',
+                    width: 150,
+                    valueGetter: (params) =>
+                      params.row.properties.hs_analytics_source,
+                  },
+                  {
+                    field: 'lifecyclestage',
+                    headerName: 'Etapa del ciclo de vida',
+                    width: 200,
+                    valueGetter: (params) =>
+                      params.row.properties.lifecyclestage,
+                  },
+                  {
+                    field: 'hs_lead_status',
+                    headerName: 'Estado del lead',
+                    width: 200,
+                    valueGetter: (params) =>
+                      params.row.properties.hs_lead_status,
+                  },
+                ]}
+                checkboxSelection
+                components={{ Toolbar: GridToolbar }}
+              />
             </div>
           </Modal.Body>
           <Modal.Footer>

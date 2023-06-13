@@ -56,7 +56,7 @@ export const SidebarData = [
   {
     icon: FiLogIn,
     heading: 'Logout',
-    path: '/sign-in',
+    path: '/profile',
   },
 ];
 
