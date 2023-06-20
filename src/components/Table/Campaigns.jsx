@@ -143,9 +143,9 @@ export default function CampaignsTable() {
       width: 200,
       headerClassName: 'header-bold',
     },
-    { field: 'spent', headerName: 'Gastado', width: 200 },
-    { field: 'results', headerName: 'Resultados', width: 200 },
-    { field: 'costByResults', headerName: 'Costo/Resultado', width: 200 },
+    { field: 'spent', headerName: 'Gastado', width: 160 },
+    { field: 'results', headerName: 'Resultados', width: 160 },
+    { field: 'costByResults', headerName: 'Costo/Resultado', width: 160 },
     {
       field: 'status',
       headerName: 'Estado',
@@ -159,7 +159,7 @@ export default function CampaignsTable() {
     {
       field: 'assignments',
       headerName: 'Asignaciones',
-      width: 200,
+      width: 180,
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => (

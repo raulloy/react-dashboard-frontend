@@ -10,7 +10,6 @@ const AdSetsCards = () => {
   const campaignsData = campaignInsights
     .filter((element) => element.adsets !== undefined)
     .filter((element) => element.adsets.data[0]?.insights?.data[0]?.spend > 0);
-  // console.log(campaignsData.map((element) => element.adsets.data).flat());
 
   // Calculate Grand Total Spend
   const grandTotalSpend = campaignsData
@@ -35,6 +34,47 @@ const AdSetsCards = () => {
     );
 
   const avgCPC = totalCPC / totalCampaigns;
+
+  // Calculate the Average Leads
+  const avgLeads =
+    campaignsData
+      .filter(
+        (element) =>
+          element.objective === 'OUTCOME_LEADS' ||
+          element.objective === 'LEAD_GENERATION'
+      )
+      .reduce(
+        (acc, curr) =>
+          acc +
+          parseFloat(
+            (
+              curr?.adsets.data[0].insights.data[0].actions.find(
+                (element) => element.action_type === 'lead'
+              ) || {}
+            ).value ?? 0
+          ),
+        0
+      ) /
+    campaignsData.filter(
+      (element) =>
+        element.objective === 'OUTCOME_LEADS' ||
+        element.objective === 'LEAD_GENERATION'
+    ).length;
+
+  const leadsByAccount = campaignsData
+    .filter(
+      (element) =>
+        element.objective === 'OUTCOME_LEADS' ||
+        element.objective === 'LEAD_GENERATION'
+    )
+    .map(
+      (element) =>
+        (
+          element.adsets.data[0].insights.data[0].actions.find(
+            (element) => element.action_type === 'lead'
+          ) || {}
+        ).value ?? 0
+    );
 
   // Calculate the Average CPL
   const costPerLeadArray = campaignsData
@@ -62,6 +102,15 @@ const AdSetsCards = () => {
   const avgCPL = totalCostPerLead / costPerLeadArray.length;
 
   const accounts = campaignsData
+    .map((element) => element.adsets.data)
+    .flat()
+    .map((element) => element?.name);
+  const leadsObjectiveAccounts = campaignsData
+    .filter(
+      (element) =>
+        element.objective === 'OUTCOME_LEADS' ||
+        element.objective === 'LEAD_GENERATION'
+    )
     .map((element) => element.adsets.data)
     .flat()
     .map((element) => element?.name);
@@ -109,6 +158,7 @@ const AdSetsCards = () => {
             },
           ]}
           accounts={accounts}
+          format="money"
         />
       </div>
       <div className="parentContainer">
@@ -128,6 +178,27 @@ const AdSetsCards = () => {
             },
           ]}
           accounts={accounts}
+          format="money"
+        />
+      </div>
+      <div className="parentContainer">
+        <Card
+          title="Leads (avg)"
+          color={{
+            backGround: 'linear-gradient(180deg, #919DFF 0%, #929DFC 100%)',
+            boxShadow: '0px 10px 20px 0px #C0C7FD',
+          }}
+          barValue={60}
+          value={avgLeads.toFixed(0)}
+          png={FaRegBuilding}
+          series={[
+            {
+              name: 'Leads',
+              data: leadsByAccount,
+            },
+          ]}
+          accounts={leadsObjectiveAccounts}
+          format="integer"
         />
       </div>
       <div className="parentContainer">
@@ -148,6 +219,7 @@ const AdSetsCards = () => {
             },
           ]}
           accounts={accounts}
+          format="money"
         />
       </div>
     </div>
@@ -155,30 +227,3 @@ const AdSetsCards = () => {
 };
 
 export default AdSetsCards;
-
-// const accountInsights = [
-//   {
-//     account_id: '930432200705578',
-//     account_name: 'HU LOMAS DE LA PLATA',
-//     spend: '25320.21',
-//     cpc: '1.276349',
-//     ctr: '0.93048',
-//     status: 'ACTIVE'
-//   },
-//   {
-//     account_id: '177341126950476',
-//     account_name: 'TRES LAGOS LIFESTYLE',
-//     spend: '17290.45',
-//     cpc: '2.158069',
-//     ctr: '1.475996',
-//     status: 'PAUSED'
-//   },
-//   {
-//     account_id: '562909907769407',
-//     account_name: 'HU AQUASOL',
-//     spend: '17495.12',
-//     cpc: '7.693544',
-//     ctr: '2.149298',
-//     status: 'ACTIVE'
-//   },
-// ];

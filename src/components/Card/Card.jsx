@@ -43,7 +43,13 @@ function CompactCard({ param, setExpanded }) {
       </div>
       <div className="detail">
         <Png />
-        <span>${param.value}</span>
+        <span>
+          {param.format === 'money'
+            ? `$${param.value.replace(/\d(?=(\d{3})+\.)/g, '$&,')}`
+            : param.format === 'integer'
+            ? param.value.toLocaleString()
+            : param.value}
+        </span>
         <span></span>
       </div>
     </motion.div>
@@ -80,7 +86,16 @@ function ExpandedCard({ param, setExpanded }) {
           enabled: false,
         },
         formatter: function (value) {
-          return '$' + value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+          if (param.format === 'money') {
+            // Format as money with two decimal places
+            return '$' + value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+          } else if (param.format === 'integer') {
+            // Format as integer with thousands separators
+            return value.toLocaleString();
+          } else {
+            // Default to original value if format parameter is not provided
+            return value;
+          }
         },
       },
       stroke: {
@@ -90,9 +105,17 @@ function ExpandedCard({ param, setExpanded }) {
       },
       tooltip: {
         y: {
-          // format y axis as money
           formatter: function (value) {
-            return '$' + value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            if (param.format === 'money') {
+              // Format as money with two decimal places
+              return '$' + value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            } else if (param.format === 'integer') {
+              // Format as integer with thousands separators
+              return value.toLocaleString();
+            } else {
+              // Default to original value if format parameter is not provided
+              return value;
+            }
           },
         },
       },

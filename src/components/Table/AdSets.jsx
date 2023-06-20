@@ -5,12 +5,12 @@ import { accounts } from '../../data/data';
 import { DateDropdown } from '../DatePickers/DateDropdown';
 import { AdSetsDataStoreContext } from '../../data/AdSetsDataStore';
 import { statusStyle } from './utils';
-import './Table.css';
 import { Link } from 'react-router-dom';
 import AdSetsCards from '../Cards/AdSetsCards';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { saveAs } from 'file-saver';
 import { facilitadores } from '../../facilitadores';
+import './Table.css';
 
 export default function AdSetsTable() {
   const {

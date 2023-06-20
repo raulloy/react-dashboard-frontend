@@ -182,28 +182,25 @@ export default function AccountsTable() {
                     {parseFloat(element.ctr).toFixed(2).toLocaleString('en-US')}
                   </TableCell>
                   <TableCell align="left">
-                    {
-                      (
-                        element.actions.find(
-                          (element) => element.action_type === 'lead'
-                        ) || {}
-                      ).value
-                    }
+                    {(
+                      element.actions.find(
+                        (element) => element.action_type === 'lead'
+                      ) || {}
+                    ).value ?? 0}
                   </TableCell>
                   <TableCell align="left">
                     $
                     {(
-                      parseFloat(element.spend) /
-                      parseFloat(
-                        (
-                          element.actions.find(
-                            (element) => element.action_type === 'lead'
-                          ) || {}
-                        ).value
-                      )
-                    )
-                      .toFixed(2)
-                      .toLocaleString('en-US')}
+                      parseFloat(element.spend) ||
+                      0 /
+                        parseFloat(
+                          (
+                            element.actions.find(
+                              (element) => element.action_type === 'lead'
+                            ) || {}
+                          ).value ?? 0
+                        )
+                    ).toLocaleString('en-US')}
                   </TableCell>
                   <TableCell align="center">
                     <Button

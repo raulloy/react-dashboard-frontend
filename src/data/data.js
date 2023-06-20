@@ -151,94 +151,117 @@ export const accounts = [
   {
     name: 'HU LOMAS DE LA PLATA',
     id: 'act_930432200705578',
+    company: 'HOGARES UNION',
   },
   {
     name: 'HU AQUASOL',
     id: 'act_562909907769407',
+    company: 'HOGARES UNION',
   },
   {
     name: 'HU PALMAS TURQUESA',
     id: 'act_1087088964961886',
+    company: 'HOGARES UNION',
   },
   {
     name: 'HU LAS TROJES',
     id: 'act_1256683497854234',
+    company: 'HOGARES UNION',
   },
   {
     name: 'HU PALMAS YUCATÁN',
     id: 'act_195882471564062',
+    company: 'HOGARES UNION',
   },
   {
     name: 'HU CIUDAD NATURA',
     id: 'act_176055110376237',
+    company: 'HOGARES UNION',
   },
   {
     name: 'HU CASCOS AZULES',
     id: 'act_175324893748729',
+    company: 'HOGARES UNION',
   },
   {
     name: 'HU MARINA TURQUESA',
     id: 'act_3671037146254618',
+    company: 'HOGARES UNION',
   },
   {
     name: 'HU JARDINES DE LA LAGUNA',
     id: 'act_1116629645809089',
+    company: 'HOGARES UNION',
   },
   {
     name: 'HU PASEOS DE LOS VIRREYES',
     id: 'act_3064079737176705',
+    company: 'HOGARES UNION',
   },
   {
     name: 'HU BDI',
     id: 'act_793700688385551',
+    company: 'HOGARES UNION',
   },
   {
     name: 'TRES LAGOS LIFESTYLE',
     id: 'act_177341126950476',
+    company: 'HU LIFESTYLE',
   },
   {
     name: 'VILLAS DEL CAMPO LIFESTYLE',
     id: 'act_225593191779506',
+    company: 'HU LIFESTYLE',
   },
   {
     name: 'SANTA FE LIFESTYLE',
     id: 'act_2480551222261700',
+    company: 'HU LIFESTYLE',
   },
   {
     name: 'ADARA LIFESTYLE',
     id: 'act_159175185508724',
+    company: 'HU LIFESTYLE',
   },
   {
     name: 'BALI LIFESTYLE',
     id: 'act_2190256254410586',
+    company: 'HU LIFESTYLE',
   },
   {
     name: 'COSMOPOL LIFESTYLE',
     id: 'act_268790700756542',
+    company: 'HU LIFESTYLE',
   },
   {
     name: 'SUMMIT PARK LIFESTYLE',
     id: 'act_2573491999594759',
+    company: 'HU LIFESTYLE',
   },
   {
     name: 'BONZA LIFESTYLE',
     id: 'act_220463320629102',
+    company: 'HU LIFESTYLE',
   },
   {
     name: 'BASALTO LIFESTYLE',
     id: 'act_258816553273090',
+    company: 'HU LIFESTYLE',
   },
   {
     name: 'ABETO LIFESTYLE',
     id: 'act_611616064341722',
+    company: 'HU LIFESTYLE',
   },
   {
     name: 'MERIDEN',
     id: 'act_2499601070366586',
+    company: 'GIM LIVINGSPACES',
   },
   {
     name: 'CENTRAL PARK',
     id: 'act_265576294404103',
+    company: 'GIM LIVINGSPACES',
   },
 ];
 

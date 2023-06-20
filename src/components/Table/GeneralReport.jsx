@@ -22,109 +22,166 @@ export default function CampaignsTable() {
     selectedAccount,
     setSelectedAccount,
     campaignInsights,
-    // contacts,
+    contacts,
   } = useContext(CampaignsDataStoreContext);
 
-  // console.log(campaignInsights.filter((element) => element.objective === 'OUTCOME_ENGAGEMENT'));
+  const fbContacts = contacts.filter(
+    (element) =>
+      element.properties.hs_analytics_first_url &&
+      element.properties.hs_analytics_first_url.includes('facebook.com')
+  );
 
-  const campaignResults = campaignInsights
-    .filter((element) => element.insights !== undefined)
-    .map((campaign) => {
-      const {
-        objective,
-        insights: { data },
-      } = campaign;
-      const spend = parseFloat(data[0].spend);
+  const contactsbyCampaign = fbContacts.map(({ id, properties }) => ({
+    id,
+    hs_analytics_first_url: properties.hs_analytics_first_url
+      ? properties.hs_analytics_first_url.match(/hsa_cam=(\d+)/)?.[1]
+      : null,
+    lifecyclestage: properties.lifecyclestage,
+  }));
 
-      let objectiveName,
-        result = 0;
+  const contactCountsByCampaign = fbContacts.reduce((acc, contact) => {
+    const campaignId =
+      contact.properties.hs_analytics_first_url?.match(/hsa_cam=(\d+)/)?.[1] ||
+      null;
+    acc[campaignId] = (acc[campaignId] || 0) + 1;
+    return acc;
+  }, {});
 
-      switch (objective) {
-        case 'OUTCOME_LEADS':
-        case 'LEAD_GENERATION':
-          objectiveName = 'Leads';
-          result = data[0].actions.reduce((acc, action) => {
-            if (action.action_type === 'lead') {
-              return acc + parseInt(action.value);
-            }
-            return acc;
-          }, 0);
-          break;
-        case 'LINK_CLICKS':
-        case 'OUTCOME_TRAFFIC':
-          objectiveName = 'Traffic';
-          result = data[0].actions.reduce((acc, action) => {
-            if (action.action_type === 'link_click') {
-              return acc + parseInt(action.value);
-            }
-            return acc;
-          }, 0);
-          break;
-        case 'MESSAGES':
-          objectiveName = 'Messages';
-          result = data[0].actions.reduce((acc, action) => {
-            if (
-              action.action_type ===
-              'onsite_conversion.messaging_conversation_started_7d'
-            ) {
-              return acc + parseInt(action.value);
-            }
-            return acc;
-          }, 0);
-          break;
-        case 'POST_ENGAGEMENT':
-          objectiveName = 'Interaction';
-          result = data[0].actions.reduce((acc, action) => {
-            if (action.action_type === 'video_view') {
-              return acc + parseInt(action.value);
-            } else if (action.action_type === 'link_click') {
-              return acc + parseInt(action.value);
-            }
-            return acc;
-          }, 0);
-          break;
-        case 'OUTCOME_ENGAGEMENT':
-          objectiveName = 'Engagement';
-          result = data[0].actions.reduce((acc, action) => {
-            if (action.action_type === 'like') {
-              return acc + parseInt(action.value);
-            } else if (
-              action.action_type ===
-              'onsite_conversion.messaging_conversation_started_7d'
-            ) {
-              return acc + parseInt(action.value);
-            }
-            return acc;
-          }, 0);
-          break;
-        case 'OUTCOME_AWARENESS':
-          objectiveName = 'Awareness';
-          result = data.reduce((acc, curr) => {
-            return acc + parseInt(curr.reach);
-          }, 0);
-          break;
-        default:
-          objectiveName = 'Unknown';
-          break;
-      }
+  const matchingCampaign = campaignInsights.map((item) => {
+    const result = contactsbyCampaign.filter(
+      (campaign) => campaign.hs_analytics_first_url === item.id
+    );
+    return result;
+  });
 
-      return { spend, objective: objectiveName, result };
-    });
+  const campaignResults = campaignInsights.map((campaign) => {
+    const { objective, insights: { data } = { data: [] } } = campaign;
+    const spend = parseFloat(data[0] ? data[0].spend : 0);
+
+    let objectiveName,
+      assignments,
+      result = 0;
+
+    switch (objective) {
+      case 'OUTCOME_LEADS':
+      case 'LEAD_GENERATION':
+        objectiveName = 'Leads';
+        assignments = matchingCampaign
+          .flat()
+          .filter((item) => item.hs_analytics_first_url === campaign.id).length;
+        result = data[0]
+          ? data[0].actions.reduce((acc, action) => {
+              if (action.action_type === 'lead') {
+                return acc + parseInt(action.value);
+              }
+              return acc;
+            }, 0)
+          : 0;
+        break;
+      case 'LINK_CLICKS':
+      case 'OUTCOME_TRAFFIC':
+        objectiveName = 'Traffic';
+        assignments = [contactCountsByCampaign].reduce(
+          (acc, obj) => (campaign.id in obj ? obj[campaign.id] : acc),
+          0
+        );
+        result = data[0]
+          ? data[0].actions.reduce((acc, action) => {
+              if (action.action_type === 'link_click') {
+                return acc + parseInt(action.value);
+              }
+              return acc;
+            }, 0)
+          : 0;
+        break;
+      case 'MESSAGES':
+        objectiveName = 'Messages';
+        assignments = [contactCountsByCampaign].reduce(
+          (acc, obj) => (campaign.id in obj ? obj[campaign.id] : acc),
+          0
+        );
+        result = data[0]
+          ? data[0].actions.reduce((acc, action) => {
+              if (
+                action.action_type ===
+                'onsite_conversion.messaging_conversation_started_7d'
+              ) {
+                return acc + parseInt(action.value);
+              }
+              return acc;
+            }, 0)
+          : 0;
+        break;
+      case 'POST_ENGAGEMENT':
+        objectiveName = 'Interaction';
+        assignments = [contactCountsByCampaign].reduce(
+          (acc, obj) => (campaign.id in obj ? obj[campaign.id] : acc),
+          0
+        );
+        result = data[0]
+          ? data[0].actions.reduce((acc, action) => {
+              if (action.action_type === 'video_view') {
+                return acc + parseInt(action.value);
+              } else if (action.action_type === 'link_click') {
+                return acc + parseInt(action.value);
+              }
+              return acc;
+            }, 0)
+          : 0;
+        break;
+      case 'OUTCOME_ENGAGEMENT':
+        objectiveName = 'Engagement';
+        assignments = [contactCountsByCampaign].reduce(
+          (acc, obj) => (campaign.id in obj ? obj[campaign.id] : acc),
+          0
+        );
+        result = data[0]
+          ? data[0].actions.reduce((acc, action) => {
+              if (action.action_type === 'like') {
+                return acc + parseInt(action.value);
+              } else if (
+                action.action_type ===
+                'onsite_conversion.messaging_conversation_started_7d'
+              ) {
+                return acc + parseInt(action.value);
+              }
+              return acc;
+            }, 0)
+          : 0;
+        break;
+      case 'OUTCOME_AWARENESS':
+        objectiveName = 'Awareness';
+        assignments = [contactCountsByCampaign].reduce(
+          (acc, obj) => (campaign.id in obj ? obj[campaign.id] : acc),
+          0
+        );
+        result = data
+          ? data.reduce((acc, curr) => {
+              return acc + parseInt(curr.reach);
+            }, 0)
+          : 0;
+        break;
+      default:
+        objectiveName = 'Unknown';
+        break;
+    }
+
+    return { spend, objective: objectiveName, assignments, result };
+  });
 
   const campaignResultsSum = campaignResults
-    .filter((obj) => Object.keys(obj).length > 0)
+    .filter((obj) => Object.keys(obj).length > 0 && obj.objective !== 'Unknown')
     .reduce((acc, obj) => {
       const index = acc.findIndex((item) => item.objective === obj.objective);
       if (index !== -1) {
         acc[index].result += obj.result;
         acc[index].spend += obj.spend;
+        acc[index].assignments += obj.assignments;
       } else {
         acc.push(obj);
       }
       return acc;
     }, []);
-
-  // console.log(campaignResultsSum);
 
   const grandTotalSpend = campaignResultsSum.reduce(
     (total, obj) => total + obj.spend,
@@ -160,8 +217,10 @@ export default function CampaignsTable() {
               <TableCell align="center">Objetivo</TableCell>
               <TableCell align="center">Gastado</TableCell>
               <TableCell align="center">Resultados</TableCell>
-              <TableCell align="center">Costo</TableCell>
+              <TableCell align="center">Costo por resultado</TableCell>
               <TableCell align="center">Gasto %</TableCell>
+              <TableCell align="center">Asignaciones</TableCell>
+              <TableCell align="center">Costo por asignación</TableCell>
             </TableRow>
           </TableHead>
           <TableBody style={{ color: 'white' }}>
@@ -177,12 +236,23 @@ export default function CampaignsTable() {
                   {element.result.toLocaleString('en-US')}
                 </TableCell>
                 <TableCell align="center">
-                  {(element.spend / element.result)
+                  $
+                  {(element.spend / element.result || 0)
                     .toFixed(2)
                     .toLocaleString('en-US')}
                 </TableCell>
                 <TableCell align="center">
                   {((element.spend / grandTotalSpend) * 100).toFixed(1)}%
+                </TableCell>
+                <TableCell align="center">{element.assignments || 0}</TableCell>
+                <TableCell align="center">
+                  $
+                  {(element.assignments !== 0
+                    ? element.spend / element.assignments
+                    : 0
+                  )
+                    .toFixed(2)
+                    .toLocaleString('en-US')}
                 </TableCell>
               </TableRow>
             ))}

@@ -17,6 +17,20 @@ const Cards = () => {
     accountInsights.reduce((acc, curr) => acc + parseFloat(curr?.cpc), 0) /
     accountInsights.length;
 
+  // Calculate the Average Leads
+  const avgLeads =
+    accountInsights.reduce(
+      (acc, curr) =>
+        acc +
+        parseFloat(
+          (
+            curr?.actions.find((element) => element.action_type === 'lead') ||
+            {}
+          ).value ?? 0
+        ),
+      0
+    ) / accountInsights.length;
+
   const costPerLeadArray = accountInsights.map((element) => {
     const leadAction = element?.actions.find(
       (action) => action.action_type === 'lead'
@@ -36,15 +50,22 @@ const Cards = () => {
   const accounts = accountInsights.map((element) => element?.account_name);
   const spendByAccount = accountInsights.map((element) => element?.spend);
   const cpcByAccount = accountInsights.map((element) => element?.cpc);
+  const leadsByAccount = accountInsights.map(
+    (element) =>
+      (element.actions.find((element) => element.action_type === 'lead') || {})
+        .value ?? 0
+  );
   const cplByAccount = accountInsights.map(
     (element) =>
-      parseFloat(element?.spend) /
-      parseFloat(
-        (
-          element?.actions.find((element) => element.action_type === 'lead') ||
-          {}
-        ).value
-      )
+      parseFloat(element?.spend) ||
+      0 /
+        parseFloat(
+          (
+            element?.actions.find(
+              (element) => element.action_type === 'lead'
+            ) || {}
+          ).value ?? 0
+        )
   );
 
   return (
@@ -68,6 +89,7 @@ const Cards = () => {
             },
           ]}
           accounts={accounts}
+          format="money"
         />
       </div>
       <div className="parentContainer">
@@ -87,6 +109,27 @@ const Cards = () => {
             },
           ]}
           accounts={accounts}
+          format="money"
+        />
+      </div>
+      <div className="parentContainer">
+        <Card
+          title="Leads (avg)"
+          color={{
+            backGround: 'linear-gradient(180deg, #919DFF 0%, #929DFC 100%)',
+            boxShadow: '0px 10px 20px 0px #C0C7FD',
+          }}
+          barValue={60}
+          value={avgLeads.toFixed(0)}
+          png={FaRegBuilding}
+          series={[
+            {
+              name: 'Leads',
+              data: leadsByAccount,
+            },
+          ]}
+          accounts={accounts}
+          format="integer" // or format="money"
         />
       </div>
       <div className="parentContainer">
@@ -107,6 +150,7 @@ const Cards = () => {
             },
           ]}
           accounts={accounts}
+          format="money"
         />
       </div>
     </div>
@@ -114,30 +158,3 @@ const Cards = () => {
 };
 
 export default Cards;
-
-// const accountInsights = [
-//   {
-//     account_id: '930432200705578',
-//     account_name: 'HU LOMAS DE LA PLATA',
-//     spend: '25320.21',
-//     cpc: '1.276349',
-//     ctr: '0.93048',
-//     status: 'ACTIVE'
-//   },
-//   {
-//     account_id: '177341126950476',
-//     account_name: 'TRES LAGOS LIFESTYLE',
-//     spend: '17290.45',
-//     cpc: '2.158069',
-//     ctr: '1.475996',
-//     status: 'PAUSED'
-//   },
-//   {
-//     account_id: '562909907769407',
-//     account_name: 'HU AQUASOL',
-//     spend: '17495.12',
-//     cpc: '7.693544',
-//     ctr: '2.149298',
-//     status: 'ACTIVE'
-//   },
-// ];

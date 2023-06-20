@@ -30,6 +30,47 @@ const CampaignCards = () => {
 
   const avgCPC = totalCPC / totalCampaigns;
 
+  // Calculate the Average Leads
+  const avgLeads =
+    campaignsData
+      .filter(
+        (element) =>
+          element.objective === 'OUTCOME_LEADS' ||
+          element.objective === 'LEAD_GENERATION'
+      )
+      .reduce(
+        (acc, curr) =>
+          acc +
+          parseFloat(
+            (
+              curr?.insights.data[0].actions.find(
+                (element) => element.action_type === 'lead'
+              ) || {}
+            ).value ?? 0
+          ),
+        0
+      ) /
+    campaignsData.filter(
+      (element) =>
+        element.objective === 'OUTCOME_LEADS' ||
+        element.objective === 'LEAD_GENERATION'
+    ).length;
+
+  const leadsByAccount = campaignsData
+    .filter(
+      (element) =>
+        element.objective === 'OUTCOME_LEADS' ||
+        element.objective === 'LEAD_GENERATION'
+    )
+    .map(
+      (element) =>
+        (
+          element.insights.data[0].actions.find(
+            (element) => element.action_type === 'lead'
+          ) || {}
+        ).value ?? 0
+    );
+
   // Calculate the Average CPL
   const costPerLeadArray = campaignsData.map((element) => {
     const leadAction = element.insights?.data[0]?.actions.find(
@@ -53,6 +94,13 @@ const CampaignCards = () => {
   const avgCPL = totalCostPerLead / costPerLeadArray.length;
 
   const accounts = campaignsData.map((element) => element?.name);
+  const leadsObjectiveAccounts = campaignsData
+    .filter(
+      (element) =>
+        element.objective === 'OUTCOME_LEADS' ||
+        element.objective === 'LEAD_GENERATION'
+    )
+    .map((element) => element?.name);
   const spendByAccount = campaignsData.map(
     (element) => element.insights?.data[0]?.spend
   );
@@ -92,6 +140,7 @@ const CampaignCards = () => {
             },
           ]}
           accounts={accounts}
+          format="money"
         />
       </div>
       <div className="parentContainer">
@@ -111,6 +160,27 @@ const CampaignCards = () => {
             },
           ]}
           accounts={accounts}
+          format="money"
+        />
+      </div>
+      <div className="parentContainer">
+        <Card
+          title="Leads (avg)"
+          color={{
+            backGround: 'linear-gradient(180deg, #919DFF 0%, #929DFC 100%)',
+            boxShadow: '0px 10px 20px 0px #C0C7FD',
+          }}
+          barValue={60}
+          value={avgLeads.toFixed(0)}
+          png={FaRegBuilding}
+          series={[
+            {
+              name: 'Leads',
+              data: leadsByAccount,
+            },
+          ]}
+          accounts={leadsObjectiveAccounts}
+          format="integer"
         />
       </div>
       <div className="parentContainer">
@@ -131,6 +201,7 @@ const CampaignCards = () => {
             },
           ]}
           accounts={accounts}
+          format="money"
         />
       </div>
     </div>
