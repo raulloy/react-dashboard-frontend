@@ -209,7 +209,7 @@ export default function CampaignsTable() {
           overflow: 'auto',
           backgroundColor: 'transparent',
         }}
-        sx={{ maxHeight: 350 }}
+        sx={{ maxHeight: 450 }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -247,12 +247,15 @@ export default function CampaignsTable() {
                 <TableCell align="center">{element.assignments || 0}</TableCell>
                 <TableCell align="center">
                   $
-                  {(element.assignments !== 0
-                    ? element.spend / element.assignments
-                    : 0
-                  )
-                    .toFixed(2)
-                    .toLocaleString('en-US')}
+                  {element.assignments !== 0
+                    ? (element.spend / element.assignments).toLocaleString(
+                        'en-US',
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )
+                    : '0.00'}
                 </TableCell>
               </TableRow>
             ))}

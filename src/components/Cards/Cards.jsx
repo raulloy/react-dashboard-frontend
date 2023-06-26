@@ -14,7 +14,7 @@ const Cards = () => {
 
   // Calculate the Average CPC
   const avgCPC =
-    accountInsights.reduce((acc, curr) => acc + parseFloat(curr?.cpc), 0) /
+    accountInsights.reduce((acc, curr) => acc + parseFloat(curr?.cpc ?? 0), 0) /
     accountInsights.length;
 
   // Calculate the Average Leads
@@ -49,7 +49,7 @@ const Cards = () => {
 
   const accounts = accountInsights.map((element) => element?.account_name);
   const spendByAccount = accountInsights.map((element) => element?.spend);
-  const cpcByAccount = accountInsights.map((element) => element?.cpc);
+  const cpcByAccount = accountInsights.map((element) => element?.cpc ?? 0);
   const leadsByAccount = accountInsights.map(
     (element) =>
       (element.actions.find((element) => element.action_type === 'lead') || {})

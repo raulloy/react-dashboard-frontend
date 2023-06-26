@@ -54,8 +54,13 @@ export const SidebarData = [
     path: '/google-ads',
   },
   {
+    icon: TbReport,
+    heading: 'General',
+    path: '/general',
+  },
+  {
     icon: FiLogIn,
-    heading: 'Logout',
+    heading: 'Profile',
     path: '/profile',
   },
 ];
@@ -267,15 +272,15 @@ export const accounts = [
 
 export const googleAccounts = [
   {
-    name: 'Hogares Unión Marca Advantage',
+    name: 'HOGARES UNIÓN MARCA ADVANTAGE',
     id: '7462269823',
   },
   {
-    name: 'HuLifestyle',
+    name: 'HU LIFESTYLE',
     id: '5347167145',
   },
   {
-    name: 'Residencial Centralpark',
+    name: 'RESIDENCIAL CENTRALPARK',
     id: '9440485190',
   },
 ];

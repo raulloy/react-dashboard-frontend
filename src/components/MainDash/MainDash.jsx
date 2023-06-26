@@ -16,6 +16,7 @@ import GoogleAdGroupsTable from '../Table/GAdGroups';
 import GoogleAdsTable from '../Table/GAds';
 import ProfileScreen from '../Signin/ProfileScreen';
 import SignupScreen from '../Signin/Signup';
+import GeneralTable from '../Table/General';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './MainDash.css';
@@ -39,6 +40,7 @@ const MainDash = () => {
         <Route path="/google-ads" element={<GoogleAdsTable />}/>
         <Route path="/profile" element={<ProfileScreen />}/>
         <Route path="/signup" element={<SignupScreen />} />
+        <Route path="/general" element={<AccountsDataStore><GeneralTable /></AccountsDataStore>}/>
       </Routes>
     </div>
   );

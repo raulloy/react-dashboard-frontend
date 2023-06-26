@@ -150,6 +150,8 @@ export default function AccountsTable() {
                 <TableCell align="left">Leads</TableCell>
                 <TableCell align="left">CPL</TableCell>
                 <TableCell align="left">Asignaciones</TableCell>
+                <TableCell align="left">CPA</TableCell>
+                <TableCell align="left">Conversión</TableCell>
               </TableRow>
             </TableHead>
             <TableBody style={{ color: 'white' }}>
@@ -191,16 +193,18 @@ export default function AccountsTable() {
                   <TableCell align="left">
                     $
                     {(
-                      parseFloat(element.spend) ||
-                      0 /
-                        parseFloat(
-                          (
-                            element.actions.find(
-                              (element) => element.action_type === 'lead'
-                            ) || {}
-                          ).value ?? 0
-                        )
-                    ).toLocaleString('en-US')}
+                      (parseFloat(element.spend) || 0) /
+                      parseFloat(
+                        (
+                          element.actions.find(
+                            (element) => element.action_type === 'lead'
+                          ) || {}
+                        ).value ?? 0
+                      )
+                    ).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                   </TableCell>
                   <TableCell align="center">
                     <Button
@@ -210,6 +214,30 @@ export default function AccountsTable() {
                     >
                       {contactCountsByCampaign[element.account_id] || 0}
                     </Button>
+                  </TableCell>
+                  <TableCell align="left">
+                    $
+                    {(
+                      (parseFloat(element.spend) || 0) /
+                        contactCountsByCampaign[element.account_id] || 0
+                    ).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </TableCell>
+                  <TableCell align="center">
+                    {(
+                      ((contactCountsByCampaign[element.account_id] || 0) /
+                        parseFloat(
+                          (
+                            element.actions.find(
+                              (element) => element.action_type === 'lead'
+                            ) || {}
+                          ).value ?? 0
+                        )) *
+                      100
+                    ).toFixed(0)}
+                    %
                   </TableCell>
                   <TableCell align="center">
                     <Button

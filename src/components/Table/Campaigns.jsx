@@ -278,7 +278,10 @@ export default function CampaignsTable() {
             ).value
           : 1
       )
-    ).toFixed(2)}`,
+    ).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`,
     status: row.status,
     assignments: [contactCountsByCampaign].reduce(
       (acc, obj) => (row.id in obj ? obj[row.id] : acc),
