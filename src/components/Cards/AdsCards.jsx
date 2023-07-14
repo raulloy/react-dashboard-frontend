@@ -46,18 +46,13 @@ const AdsCards = () => {
           element.campaign.objective === 'OUTCOME_LEADS' ||
           element.campaign.objective === 'LEAD_GENERATION'
       )
-      .reduce(
-        (acc, curr) =>
-          acc +
-          parseFloat(
-            (
-              curr?.ads.data[0].insights.data[0].actions.find(
-                (element) => element.action_type === 'lead'
-              ) || {}
-            ).value ?? 0
-          ),
-        0
-      ) /
+      .reduce((acc, curr) => {
+        const leadValue =
+          curr?.ads?.data[0]?.insights?.data[0]?.actions?.find(
+            (element) => element.action_type === 'lead'
+          )?.value ?? 0;
+        return acc + parseFloat(leadValue);
+      }, 0) /
     campaignsData.filter(
       (element) =>
         element.campaign.objective === 'OUTCOME_LEADS' ||
@@ -70,14 +65,13 @@ const AdsCards = () => {
         element.campaign.objective === 'OUTCOME_LEADS' ||
         element.campaign.objective === 'LEAD_GENERATION'
     )
-    .map(
-      (element) =>
-        (
-          element.ads.data[0].insights.data[0].actions.find(
-            (element) => element.action_type === 'lead'
-          ) || {}
-        ).value ?? 0
-    );
+    .map((element) => {
+      const leadValue =
+        element.ads?.data[0]?.insights?.data[0]?.actions?.find(
+          (element) => element.action_type === 'lead'
+        )?.value ?? 0;
+      return parseFloat(leadValue);
+    });
 
   // Calculate the Average CPL
   const costPerLeadArray = campaignsData
