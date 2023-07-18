@@ -33,11 +33,20 @@ export default function CampaignsTable() {
     }, 0);
   }, [campaignInsights]);
 
-  const fbContacts = contacts.filter(
-    (element) =>
+  const fbContacts = contacts.filter((element) => {
+    if (
       element.properties.hs_analytics_first_url &&
       element.properties.hs_analytics_first_url.includes('facebook.com')
-  );
+    ) {
+      const assignedDate = new Date(
+        element.properties.hubspot_owner_assigneddate
+      );
+      const sinceDate = new Date(since);
+      const untilDate = new Date(until);
+      return assignedDate >= sinceDate && assignedDate <= untilDate;
+    }
+    return false;
+  });
 
   const contactsbyCampaign = fbContacts.map(({ id, properties }) => ({
     id,
@@ -159,7 +168,7 @@ export default function CampaignsTable() {
     {
       field: 'assignments',
       headerName: 'Asignaciones',
-      width: 180,
+      width: 160,
       headerAlign: 'center',
       align: 'center',
       renderCell: (params) => (
@@ -172,6 +181,8 @@ export default function CampaignsTable() {
         </Button>
       ),
     },
+    { field: 'cpa', headerName: 'CPA', width: 140 },
+    { field: 'conversion', headerName: 'Conversión %', width: 140 },
     // { field: 'mql', headerName: 'MQL', width: 200 },
     { field: 'reach', headerName: 'Alcance', width: 100 },
     { field: 'impressions', headerName: 'Impresiones', width: 100 },
@@ -287,6 +298,47 @@ export default function CampaignsTable() {
       (acc, obj) => (row.id in obj ? obj[row.id] : acc),
       0
     ),
+    cpa: `$${
+      ((row.objective === 'OUTCOME_LEADS' ||
+        row.objective === 'LEAD_GENERATION') &&
+      [contactCountsByCampaign].reduce(
+        (acc, obj) => (row.id in obj ? obj[row.id] : acc),
+        0
+      ) !== 0
+        ? parseFloat(row.insights?.data[0].spend) /
+          [contactCountsByCampaign].reduce(
+            (acc, obj) => (row.id in obj ? obj[row.id] : acc),
+            0
+          )
+        : 0
+      ).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }) || 0
+    }`,
+    conversion: `${(
+      (((row.objective === 'OUTCOME_LEADS' ||
+        row.objective === 'LEAD_GENERATION') &&
+      [contactCountsByCampaign].reduce(
+        (acc, obj) => (row.id in obj ? obj[row.id] : acc),
+        0
+      ) !== 0
+        ? [contactCountsByCampaign].reduce(
+            (acc, obj) => (row.id in obj ? obj[row.id] : acc),
+            0
+          )
+        : 0) || 0) /
+        parseInt(
+          (
+            row.insights?.data[0].actions.find(
+              (element) => element.action_type === 'lead'
+            ) || {}
+          ).value
+        ) || 0
+    ).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}%`,
     // mql: 'MQL',
     reach: parseInt(
       row.insights ? row.insights.data[0].reach : 0

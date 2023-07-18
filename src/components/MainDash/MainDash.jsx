@@ -18,6 +18,7 @@ import ProfileScreen from '../Signin/ProfileScreen';
 import SignupScreen from '../Signin/Signup';
 import GeneralTable from '../Table/General';
 import { ToastContainer } from 'react-toastify';
+import Compare from '../Table/Compare';
 import 'react-toastify/dist/ReactToastify.css';
 import './MainDash.css';
 
@@ -41,6 +42,7 @@ const MainDash = () => {
         <Route path="/profile" element={<ProfileScreen />}/>
         <Route path="/signup" element={<SignupScreen />} />
         <Route path="/general" element={<AccountsDataStore><GeneralTable /></AccountsDataStore>}/>
+        <Route path="/compare" element={<Compare />}/>
       </Routes>
     </div>
   );

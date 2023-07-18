@@ -1,5 +1,10 @@
 // Sidebar imports
-import { FaRegBuilding, FaRegFolder, FaRegSquare } from 'react-icons/fa';
+import {
+  FaRegBuilding,
+  FaRegFolder,
+  FaRegSquare,
+  FaRegChartBar,
+} from 'react-icons/fa';
 import { MdOutlineSpaceDashboard } from 'react-icons/md';
 import { TbReport } from 'react-icons/tb';
 import { FiLogIn } from 'react-icons/fi';
@@ -57,6 +62,11 @@ export const SidebarData = [
     icon: TbReport,
     heading: 'General',
     path: '/general',
+  },
+  {
+    icon: FaRegChartBar,
+    heading: 'Compare',
+    path: '/compare',
   },
   {
     icon: FiLogIn,

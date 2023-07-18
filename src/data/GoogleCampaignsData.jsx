@@ -93,3 +93,96 @@ export const GoogleSpendByAccount = (since, until, accountId) => {
 
   return totalSpend;
 };
+
+export const GoogleCPCByAccount = (since, until, accountId) => {
+  const [googleCampaignInsights, setGoogleCampaignInsights] = useState([]);
+  const [averageCPC, setAverageCPC] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch Campaign Insights
+        const campaignsResponse = await googleCampaignsData(
+          accountId,
+          since,
+          until
+        );
+        setGoogleCampaignInsights(campaignsResponse);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, [since, until, accountId]);
+
+  useEffect(() => {
+    // Calculate average cpc
+    const average_cpc =
+      googleCampaignInsights.reduce(
+        (total, insight) => total + insight.metrics.average_cpc,
+        0
+      ) / googleCampaignInsights.length;
+    setAverageCPC(average_cpc);
+  }, [googleCampaignInsights]);
+
+  return averageCPC;
+};
+
+export const GoogleLeadsByAccount = (since, until, accountId) => {
+  const [googleCampaignInsights, setGoogleCampaignInsights] = useState([]);
+  const [totalConversions, setTotalConversions] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch Campaign Insights
+        const campaignsResponse = await googleCampaignsData(
+          accountId,
+          since,
+          until
+        );
+        setGoogleCampaignInsights(campaignsResponse);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, [since, until, accountId]);
+
+  useEffect(() => {
+    // Calculate total conversions
+    const conversions = googleCampaignInsights.reduce(
+      (total, insight) => total + insight.metrics.conversions,
+      0
+    );
+    setTotalConversions(conversions);
+  }, [googleCampaignInsights]);
+
+  return totalConversions;
+};
+
+export const GoogleDataByAccount = (since, until, accountId) => {
+  const [googleCampaignInsights, setGoogleCampaignInsights] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch Campaign Insights
+        const campaignsResponse = await googleCampaignsData(
+          accountId,
+          since,
+          until
+        );
+        setGoogleCampaignInsights(campaignsResponse);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, [since, until, accountId]);
+
+  return googleCampaignInsights;
+};
