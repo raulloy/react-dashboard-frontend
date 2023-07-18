@@ -42,7 +42,6 @@ const MainDash = () => {
         <Route path="/profile" element={<ProfileScreen />}/>
         <Route path="/signup" element={<SignupScreen />} />
         <Route path="/general" element={<AccountsDataStore><GeneralTable /></AccountsDataStore>}/>
-        <Route path="/compare" element={<Compare />}/>
       </Routes>
     </div>
   );
