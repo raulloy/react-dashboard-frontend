@@ -12,10 +12,13 @@ export default function SigninScreen() {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await Axios.post('/api/users/signin', {
-        email,
-        password,
-      });
+      const { data } = await Axios.post(
+        'https://www.dashboard-aws.net/api/users/signin',
+        {
+          email,
+          password,
+        }
+      );
       localStorage.setItem('userInfo', JSON.stringify(data));
       document.location.reload();
     } catch (err) {
