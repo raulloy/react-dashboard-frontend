@@ -16,7 +16,7 @@ export const campaignsData = async (selectedAccount, since, until) => {
 
 export const campaignsDataByMonth = async (selectedAccount) => {
   const response = await axios.get(
-    `/api/account-insights-by-month/${selectedAccount}`
+    `https://www.dashboard-aws.net/api/account-insights-by-month/${selectedAccount}`
   );
   return response.data;
 };
