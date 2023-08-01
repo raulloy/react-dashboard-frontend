@@ -65,8 +65,8 @@ export const SidebarData = [
   },
   {
     icon: FaRegChartBar,
-    heading: 'Compare',
-    path: '/compare',
+    heading: 'Analytics',
+    path: '/analytics',
   },
   {
     icon: FiLogIn,

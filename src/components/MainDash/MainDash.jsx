@@ -9,6 +9,7 @@ import AdsFiltered from '../Table/AdsFiltered';
 import GeneralReport from '../Table/GeneralReport';
 import { AccountsDataStore } from '../../data/AccountsDataStore';
 import { CampaignsDataStore } from '../../data/CampaignsDataStore';
+import { CampaignsByMonthDataStore } from '../../data/CampaignsByMonthDataStore';
 import { AdSetsDataStore } from '../../data/AdSetsDataStore';
 import { AdsDataStore } from '../../data/AdsDataStore';
 import GoogleCampaignsTable from '../Table/GCampaigns';
@@ -18,6 +19,7 @@ import ProfileScreen from '../Signin/ProfileScreen';
 import SignupScreen from '../Signin/Signup';
 import GeneralTable from '../Table/General';
 import { ToastContainer } from 'react-toastify';
+import Analytics from '../Table/Analytics';
 import 'react-toastify/dist/ReactToastify.css';
 import './MainDash.css';
 
@@ -41,6 +43,7 @@ const MainDash = () => {
         <Route path="/profile" element={<ProfileScreen />}/>
         <Route path="/signup" element={<SignupScreen />} />
         <Route path="/general" element={<AccountsDataStore><GeneralTable /></AccountsDataStore>}/>
+        <Route path="/analytics" element={<CampaignsByMonthDataStore><Analytics /></CampaignsByMonthDataStore>}/>
       </Routes>
     </div>
   );

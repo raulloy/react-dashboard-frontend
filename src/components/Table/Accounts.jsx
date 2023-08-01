@@ -20,7 +20,22 @@ export default function AccountsTable() {
   const { since, setSince, until, setUntil, accountInsights, contacts } =
     useContext(AccountsDataStoreContext);
 
-  const contactsbyCampaign = contacts.map(({ id, properties }) => ({
+  const fbContacts = contacts.filter((element) => {
+    if (
+      element.properties.hs_analytics_first_url &&
+      element.properties.hs_analytics_first_url.includes('facebook.com')
+    ) {
+      const assignedDate = new Date(
+        element.properties.hubspot_owner_assigneddate
+      );
+      const sinceDate = new Date(since);
+      const untilDate = new Date(until);
+      return assignedDate >= sinceDate && assignedDate <= untilDate;
+    }
+    return false;
+  });
+
+  const contactsbyCampaign = fbContacts.map(({ id, properties }) => ({
     id,
     hs_analytics_first_url: properties.hs_analytics_first_url
       ? properties.hs_analytics_first_url.match(/hsa_acc=(\d+)/)?.[1]
@@ -28,7 +43,7 @@ export default function AccountsTable() {
     lifecyclestage: properties.lifecyclestage,
   }));
 
-  const contactCountsByCampaign = contacts.reduce((acc, contact) => {
+  const contactCountsByCampaign = fbContacts.reduce((acc, contact) => {
     const campaignId =
       contact.properties.hs_analytics_first_url?.match(/hsa_acc=(\d+)/)?.[1] ||
       null;
@@ -45,7 +60,7 @@ export default function AccountsTable() {
     const matchingCampaign = contactsbyCampaign.filter(
       (campaign) => campaign.hs_analytics_first_url === campaignID
     );
-    const matchingContact = contacts.filter((contact) =>
+    const matchingContact = fbContacts.filter((contact) =>
       matchingCampaign.some(
         (campaign) =>
           campaign.id === contact.id &&

@@ -68,11 +68,20 @@ export default function AdSetsTable() {
 
   // console.log(transformedCampaigns);
 
-  const fbContacts = contacts.filter(
-    (element) =>
+  const fbContacts = contacts.filter((element) => {
+    if (
       element.properties.hs_analytics_first_url &&
       element.properties.hs_analytics_first_url.includes('facebook.com')
-  );
+    ) {
+      const assignedDate = new Date(
+        element.properties.hubspot_owner_assigneddate
+      );
+      const sinceDate = new Date(since);
+      const untilDate = new Date(until);
+      return assignedDate >= sinceDate && assignedDate <= untilDate;
+    }
+    return false;
+  });
 
   const contactsbyCampaign = fbContacts.map(({ id, properties }) => ({
     id,

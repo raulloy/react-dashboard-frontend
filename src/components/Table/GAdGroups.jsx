@@ -60,11 +60,20 @@ export default function GoogleAdGroupsTable() {
     fetchData();
   }, [since, until, googleSelectedAccount]);
 
-  const googleContacts = contacts.filter(
-    (element) =>
+  const googleContacts = contacts.filter((element) => {
+    if (
       element.properties.hs_analytics_first_url &&
       element.properties.hs_analytics_first_url.includes('ads.google.com')
-  );
+    ) {
+      const assignedDate = new Date(
+        element.properties.hubspot_owner_assigneddate
+      );
+      const sinceDate = new Date(since);
+      const untilDate = new Date(until);
+      return assignedDate >= sinceDate && assignedDate <= untilDate;
+    }
+    return false;
+  });
 
   const contactsbyCampaign = googleContacts.map(({ id, properties }) => ({
     id,
