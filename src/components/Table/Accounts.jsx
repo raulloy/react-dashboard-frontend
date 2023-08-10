@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -151,6 +151,7 @@ export default function AccountsTable() {
             backgroundColor: 'transparent',
           }}
           sx={{ maxHeight: 350 }}
+          className="table-container"
         >
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -167,6 +168,7 @@ export default function AccountsTable() {
                 <TableCell align="left">Asignaciones</TableCell>
                 <TableCell align="left">CPA</TableCell>
                 <TableCell align="left">Conversión</TableCell>
+                <TableCell align="left">Details</TableCell>
               </TableRow>
             </TableHead>
             <TableBody style={{ color: 'white' }}>
@@ -207,20 +209,32 @@ export default function AccountsTable() {
                   </TableCell>
                   <TableCell align="left">
                     $
-                    {(
-                      (parseFloat(element.spend) || 0) /
-                      parseFloat(
+                    {(() => {
+                      const spend = parseFloat(element.spend) || 0;
+                      const leadValue = parseFloat(
                         (
                           element.actions.find(
                             (element) => element.action_type === 'lead'
                           ) || {}
-                        ).value ?? 0
-                      )
-                    ).toLocaleString('en-US', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
+                        ).value || 0
+                      );
+
+                      if (leadValue === 0) {
+                        return '0.00';
+                      }
+
+                      const result = (spend / leadValue).toLocaleString(
+                        'en-US',
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      );
+
+                      return result;
+                    })()}
                   </TableCell>
+
                   <TableCell align="center">
                     <Button
                       onClick={() => handleShowContacts(element.account_id)}
