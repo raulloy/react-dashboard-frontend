@@ -39,11 +39,16 @@
   margin-top: 10px;
 }
 
-.table-container {
-  height: 380px;
-  width: 100%;
-  overflow: auto;
+.MuiTableHead-root {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: linear-gradient(106.37deg, #e0fff1 29.63%, #e6eefb 90.85%);
 }
+
+/* .table-container {
+  overflow: auto;
+} */
 
 .header-bold {
   font-weight: bold;
