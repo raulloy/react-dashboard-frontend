@@ -38,9 +38,7 @@ export default function CampaignsTable() {
       element.properties.hs_analytics_first_url &&
       element.properties.hs_analytics_first_url.includes('facebook.com')
     ) {
-      const assignedDate = new Date(
-        element.properties.hubspot_owner_assigneddate
-      );
+      const assignedDate = new Date(element.properties.createdate);
       const sinceDate = new Date(since);
       const untilDate = new Date(until);
       return assignedDate >= sinceDate && assignedDate <= untilDate;

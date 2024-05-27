@@ -13,7 +13,7 @@ export default function SigninScreen() {
     e.preventDefault();
     try {
       const { data } = await Axios.post(
-        'https://www.dashboard-aws.net/api/users/signin',
+        'https://gim-dashboard.hogaresunion.com/api/users/signin',
         {
           email,
           password,

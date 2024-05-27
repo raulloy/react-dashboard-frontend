@@ -46,6 +46,10 @@
   background: linear-gradient(106.37deg, #e0fff1 29.63%, #e6eefb 90.85%);
 }
 
+/* .table-container {
+  overflow: auto;
+} */
+
 .header-bold {
   font-weight: bold;
 }

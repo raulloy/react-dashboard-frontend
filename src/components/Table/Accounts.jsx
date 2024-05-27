@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -25,9 +25,7 @@ export default function AccountsTable() {
       element.properties.hs_analytics_first_url &&
       element.properties.hs_analytics_first_url.includes('facebook.com')
     ) {
-      const assignedDate = new Date(
-        element.properties.hubspot_owner_assigneddate
-      );
+      const assignedDate = new Date(element.properties.createdate);
       const sinceDate = new Date(since);
       const untilDate = new Date(until);
       return assignedDate >= sinceDate && assignedDate <= untilDate;

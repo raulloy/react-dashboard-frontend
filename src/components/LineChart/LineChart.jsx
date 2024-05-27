@@ -26,7 +26,16 @@ const LineChart = () => {
 
   const [data, setData] = useState([['Month', 'Parametro']]);
   const months = useMemo(
-    () => ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+    () => [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+    ],
     []
   );
   const parameters = [
@@ -45,21 +54,22 @@ const LineChart = () => {
       const newData = [['Month', ...selectedParameters]];
 
       campaignInsights.forEach((account, index) => {
-        const reach = parseInt(account.reach);
-        const spend = parseFloat(account.spend);
-        const clicks = parseInt(account.clicks);
-        const impressions = parseInt(account.impressions);
-        const cpc = parseInt(account.cpc);
+        const reach = parseInt(account?.reach);
+        const spend = parseFloat(account?.spend);
+        const clicks = parseInt(account?.clicks);
+        const impressions = parseInt(account?.impressions);
+        const cpc = parseInt(account?.cpc);
         const leads = parseInt(
           (
-            account.actions.find((account) => account.action_type === 'lead') ||
-            {}
+            account?.actions?.find(
+              (account) => account?.action_type === 'lead'
+            ) || {}
           ).value ?? 0
         );
         const cpl = parseFloat(
           (
-            account.cost_per_action_type.find(
-              (account) => account.action_type === 'lead'
+            account?.cost_per_action_type.find(
+              (account) => account?.action_type === 'lead'
             ) || {}
           ).value ?? 0
         );
